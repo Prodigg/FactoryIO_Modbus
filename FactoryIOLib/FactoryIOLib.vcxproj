@@ -125,6 +125,9 @@
   <ItemGroup>
     <ClCompile Include="FactoryIO.h" />
   </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="modbus.h" />
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>
