@@ -13,6 +13,12 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
+    <Filter Include="Headerdateien\Parts">
+      <UniqueIdentifier>{ada8e798-65e5-44c5-a292-87e5a6148d03}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Headerdateien\Parts\Warining Devices">
+      <UniqueIdentifier>{a1a68cd8-7a10-47cb-88c7-1aed24cf1d16}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="FactoryIO.h">
@@ -26,11 +32,14 @@
     <ClInclude Include="modbus.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
-    <ClInclude Include="alarmSiren.h">
-      <Filter>Headerdateien</Filter>
-    </ClInclude>
     <ClInclude Include="FactoryIOGeneral.h">
       <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="alarmSiren.h">
+      <Filter>Headerdateien\Parts\Warining Devices</Filter>
+    </ClInclude>
+    <ClInclude Include="WarningLight.h">
+      <Filter>Headerdateien\Parts\Warining Devices</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

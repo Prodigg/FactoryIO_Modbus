@@ -18,17 +18,14 @@ namespace FactoryIOLibTest {
 				Assert::Fail(L"Couldn't connect to FactoryIO");
 			}
 			FactoryIO::alarmSiren_t alarmSirene(mb, 0);
-			std::chrono::steady_clock::time_point begin;
 			bool ModbusServerSireneOn = false;
 
 			///// check if sirene turnes on
 
 			alarmSirene.setSireneState(true);
 
-			begin = std::chrono::steady_clock::now();
-			while (std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now() - begin).count() >= 50) {
-			}
-			
+			std::this_thread::sleep_for(std::chrono::milliseconds(20));
+
 			mb.modbus_read_coils(0, 1, &ModbusServerSireneOn);
 			Assert::AreEqual(true, ModbusServerSireneOn, L"sirene didn't turn on");
 
@@ -36,12 +33,39 @@ namespace FactoryIOLibTest {
 
 			alarmSirene.setSireneState(false);
 
-			begin = std::chrono::steady_clock::now();
-			while (std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now() - begin).count() >= 50) {
-			}
+			std::this_thread::sleep_for(std::chrono::milliseconds(20));
 
 			mb.modbus_read_coils(0, 1, &ModbusServerSireneOn);
 			Assert::AreEqual(false, ModbusServerSireneOn, L"sirene didn't turn off");
+			mb.modbus_close();
+		}
+
+		TEST_METHOD(warningLight) {
+			modbus mb = modbus("127.0.0.1", 502);
+			mb.modbus_set_slave_id(1);
+			if (!mb.modbus_connect()) {
+				Assert::Fail(L"Couldn't connect to FactoryIO");
+			}
+			FactoryIO::WarningLight_t warningLight(mb, 1);
+			bool ModbusServerLightOn = false;
+
+			///// check if light turnes on
+
+			warningLight.setLightState(true);
+
+			std::this_thread::sleep_for(std::chrono::milliseconds(20));
+
+			mb.modbus_read_coils(1, 1, &ModbusServerLightOn);
+			Assert::AreEqual(true, ModbusServerLightOn, L"sirene didn't turn on");
+
+			///// check if light turnes off
+
+			warningLight.setLightState(false);
+
+			std::this_thread::sleep_for(std::chrono::milliseconds(20));
+
+			mb.modbus_read_coils(0, 1, &ModbusServerLightOn);
+			Assert::AreEqual(false, ModbusServerLightOn, L"sirene didn't turn off");
 			mb.modbus_close();
 		}
 	};

@@ -134,6 +134,7 @@
     <ClInclude Include="alarmSiren.h" />
     <ClInclude Include="FactoryIOGeneral.h" />
     <ClInclude Include="modbus.h" />
+    <ClInclude Include="WarningLight.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

@@ -17,3 +17,4 @@
  */
 
 #include "alarmSiren.h"
+#include "WarningLight.h"
