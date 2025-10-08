@@ -6,6 +6,6 @@
 #include <optional>
 
 namespace FactoryIO {
-	using modbusIndex_t = uint16_t;
+	using modbusAddr_t = uint16_t;
     
 }

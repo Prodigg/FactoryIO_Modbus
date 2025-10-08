@@ -638,7 +638,7 @@ inline int modbus::modbus_write_registers(uint16_t address, uint16_t amount, con
 inline ssize_t modbus::modbus_send(uint8_t* to_send, size_t length)
 {
     _msg_id++;
-    return send(_socket, (const char*)to_send, (size_t)length, 0);
+    return send(_socket, (const char*)to_send, (int)length, 0);
 }
 
 /**

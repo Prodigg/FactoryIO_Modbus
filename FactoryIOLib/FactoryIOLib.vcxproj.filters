@@ -19,13 +19,19 @@
     <Filter Include="Headerdateien\Parts\Warining Devices">
       <UniqueIdentifier>{a1a68cd8-7a10-47cb-88c7-1aed24cf1d16}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Quelldateien\Parts">
+      <UniqueIdentifier>{c207b0a0-c188-4c12-b9c5-ce759ca62dae}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Quelldateien\Parts\Warning Devices">
+      <UniqueIdentifier>{799698e2-9c39-4408-954a-fb80969727e5}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="FactoryIO.h">
       <Filter>Headerdateien</Filter>
     </ClCompile>
-    <ClCompile Include="main.cpp">
-      <Filter>Quelldateien</Filter>
+    <ClCompile Include="StackLight.cpp">
+      <Filter>Quelldateien\Parts\Warning Devices</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -39,6 +45,9 @@
       <Filter>Headerdateien\Parts\Warining Devices</Filter>
     </ClInclude>
     <ClInclude Include="WarningLight.h">
+      <Filter>Headerdateien\Parts\Warining Devices</Filter>
+    </ClInclude>
+    <ClInclude Include="StackLight.h">
       <Filter>Headerdateien\Parts\Warining Devices</Filter>
     </ClInclude>
   </ItemGroup>

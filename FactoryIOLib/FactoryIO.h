@@ -18,3 +18,4 @@
 
 #include "alarmSiren.h"
 #include "WarningLight.h"
+#include "StackLight.h"
