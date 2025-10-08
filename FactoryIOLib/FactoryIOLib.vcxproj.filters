@@ -18,9 +18,18 @@
     <ClCompile Include="FactoryIO.h">
       <Filter>Headerdateien</Filter>
     </ClCompile>
+    <ClCompile Include="main.cpp">
+      <Filter>Quelldateien</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="modbus.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="alarmSiren.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="FactoryIOGeneral.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
   </ItemGroup>
