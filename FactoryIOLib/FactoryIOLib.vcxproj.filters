@@ -25,6 +25,9 @@
     <Filter Include="Quelldateien\Parts\Warning Devices">
       <UniqueIdentifier>{799698e2-9c39-4408-954a-fb80969727e5}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Headerdateien\Parts\Emmiter/Remover">
+      <UniqueIdentifier>{520f8ee8-78b2-458b-92d4-f07482e197d5}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="FactoryIO.h">
@@ -32,6 +35,15 @@
     </ClCompile>
     <ClCompile Include="StackLight.cpp">
       <Filter>Quelldateien\Parts\Warning Devices</Filter>
+    </ClCompile>
+    <ClCompile Include="WarningLight.cpp">
+      <Filter>Quelldateien\Parts\Warning Devices</Filter>
+    </ClCompile>
+    <ClCompile Include="alarmSiren.cpp">
+      <Filter>Quelldateien\Parts\Warning Devices</Filter>
+    </ClCompile>
+    <ClCompile Include="FactoryIOGeneral.cpp">
+      <Filter>Quelldateien</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -49,6 +61,9 @@
     </ClInclude>
     <ClInclude Include="StackLight.h">
       <Filter>Headerdateien\Parts\Warining Devices</Filter>
+    </ClInclude>
+    <ClInclude Include="Emmiter.h">
+      <Filter>Headerdateien\Parts\Emmiter/Remover</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

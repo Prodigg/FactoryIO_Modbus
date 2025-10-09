@@ -3,6 +3,7 @@
 #include <FactoryIO.h>
 #include <chrono>
 #include <thread>
+#include <functional>
 
 using namespace Microsoft::VisualStudio::CppUnitTestFramework;
 
@@ -45,6 +46,21 @@ namespace FactoryIOLibTest {
 			Assert::AreEqual(false, ModbusServerSireneOn, L"sirene didn't turn off");
 			mb.modbus_close();
 		}
+
+		TEST_METHOD(noAddress) {
+			modbus mb = modbus("127.0.0.1", 502);
+			mb.modbus_set_slave_id(1);
+			if (!mb.modbus_connect()) {
+				Assert::Fail(L"Couldn't connect to FactoryIO");
+			}
+
+			FactoryIO::alarmSiren_t alarmSirene(mb, FactoryIO::NO_MODBUS_ADDR);
+			Assert::ExpectException<std::runtime_error, std::function<void(void)>>([&]() {
+				alarmSirene.setSireneState(true);
+				}, L"setSireneState did not rase a exception when no valid modbus addr is provided.");
+
+			mb.modbus_close();
+		}
 	};
 
 	TEST_CLASS(warningLight) {
@@ -76,6 +92,21 @@ namespace FactoryIOLibTest {
 			Assert::AreEqual(false, ModbusServerLightOn, L"sirene didn't turn off");
 			mb.modbus_close();
 			
+		}
+
+		TEST_METHOD(noAddress) {
+			modbus mb = modbus("127.0.0.1", 502);
+			mb.modbus_set_slave_id(1);
+			if (!mb.modbus_connect()) {
+				Assert::Fail(L"Couldn't connect to FactoryIO");
+			}
+
+			FactoryIO::WarningLight_t warningLight(mb, FactoryIO::NO_MODBUS_ADDR);
+			Assert::ExpectException<std::runtime_error, std::function<void(void)>>([&]() {
+				warningLight.setLightState(true);
+				}, L"setSireneState did not rase a exception when no valid modbus addr is provided.");
+
+			mb.modbus_close();
 		}
 	};
 
@@ -174,6 +205,29 @@ namespace FactoryIOLibTest {
 
 			mb.modbus_close();
 
+		}
+
+		TEST_METHOD(noAddress) {
+			modbus mb = modbus("127.0.0.1", 502);
+			mb.modbus_set_slave_id(1);
+			if (!mb.modbus_connect()) {
+				Assert::Fail(L"Couldn't connect to FactoryIO");
+			}
+
+			FactoryIO::StackLight_t stackLight(mb, FactoryIO::NO_MODBUS_ADDR, FactoryIO::NO_MODBUS_ADDR, FactoryIO::NO_MODBUS_ADDR);
+			Assert::ExpectException<std::runtime_error, std::function<void(void)>>([&]() {
+				stackLight.setGreenLight(true);
+				}, L"setSireneState did not rase a exception when no valid modbus addr is provided.");
+
+			Assert::ExpectException<std::runtime_error, std::function<void(void)>>([&]() {
+				stackLight.setOrangeLight(true);
+				}, L"setSireneState did not rase a exception when no valid modbus addr is provided.");
+
+			Assert::ExpectException<std::runtime_error, std::function<void(void)>>([&]() {
+				stackLight.setRedLight(true);
+				}, L"setSireneState did not rase a exception when no valid modbus addr is provided.");
+
+			mb.modbus_close();
 		}
 	};
 }

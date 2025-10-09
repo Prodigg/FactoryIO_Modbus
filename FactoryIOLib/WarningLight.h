@@ -4,11 +4,9 @@ namespace FactoryIO {
 	class WarningLight_t {
 	public:
 		WarningLight_t(modbus& mb, modbusAddr_t sireneOnIndex) : _lightOnIndex(sireneOnIndex), _mb(mb) {}
-		void setLightState(bool state) { _lightOn = state; updateFactoryIO(); }
+		void setLightState(bool state);
 	private:
-		void updateFactoryIO() {
-			_mb.modbus_write_coil(_lightOnIndex, _lightOn);
-		}
+		void updateFactoryIO();
 
 		modbus& _mb;
 		modbusAddr_t _lightOnIndex;

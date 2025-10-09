@@ -4,11 +4,9 @@ namespace FactoryIO {
 	class alarmSiren_t {
 	public:
 		alarmSiren_t(modbus& mb, modbusAddr_t sireneOnIndex) : _sireneOnIndex(sireneOnIndex), _mb(mb) { }
-		void setSireneState(bool state) { _sireneOn = state; updateFactoryIO(); }
+		void setSireneState(bool state);
 	private:
-		void updateFactoryIO() {
-			_mb.modbus_write_coil(_sireneOnIndex, _sireneOn);
-		}
+		void updateFactoryIO();
 
 		modbus& _mb; 
 		modbusAddr_t _sireneOnIndex;

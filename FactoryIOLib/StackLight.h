@@ -4,9 +4,9 @@ namespace FactoryIO {
 	class StackLight_t {
 	public:
 		StackLight_t(modbus& mb, modbusAddr_t lightGreenOnAddr, modbusAddr_t lightOrangeOnAddr, modbusAddr_t lightRedOnAddr);
-		void setGreenLight(bool state) { _lightGreenOn = state; updateFactoryIO(); }
-		void setOrangeLight(bool state) { _lightOrangeOn = state; updateFactoryIO(); }
-		void setRedLight(bool state) { _lightRedOn = state; updateFactoryIO(); }
+		void setGreenLight(bool state);
+		void setOrangeLight(bool state);
+		void setRedLight(bool state);
 	private:
 		void updateFactoryIO();
 
