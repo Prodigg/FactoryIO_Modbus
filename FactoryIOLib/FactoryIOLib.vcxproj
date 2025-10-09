@@ -128,6 +128,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="alarmSiren.cpp" />
+    <ClCompile Include="Emmiter.cpp" />
     <ClCompile Include="FactoryIO.h" />
     <ClCompile Include="FactoryIOGeneral.cpp" />
     <ClCompile Include="StackLight.cpp" />

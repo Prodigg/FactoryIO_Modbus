@@ -28,6 +28,9 @@
     <Filter Include="Headerdateien\Parts\Emmiter/Remover">
       <UniqueIdentifier>{520f8ee8-78b2-458b-92d4-f07482e197d5}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Quelldateien\Parts\Emmiter/Remover">
+      <UniqueIdentifier>{4401c556-2af1-4fe0-99d1-d8008fec2fdf}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="FactoryIO.h">
@@ -44,6 +47,9 @@
     </ClCompile>
     <ClCompile Include="FactoryIOGeneral.cpp">
       <Filter>Quelldateien</Filter>
+    </ClCompile>
+    <ClCompile Include="Emmiter.cpp">
+      <Filter>Quelldateien\Parts\Emmiter/Remover</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

@@ -19,3 +19,4 @@
 #include "alarmSiren.h"
 #include "WarningLight.h"
 #include "StackLight.h"
+#include "Emmiter.h"

@@ -13,6 +13,12 @@ bool getModbusCoilState(FactoryIO::modbusAddr_t addr, modbus& mb) {
 	return tmp;
 }
 
+uint16_t getModbusRegState(FactoryIO::modbusAddr_t addr, modbus& mb) {
+	uint16_t tmp = 0;
+	mb.modbus_read_holding_registers(addr, 1, &tmp);
+	return tmp;
+}
+
 namespace FactoryIOLibTest {
 	TEST_CLASS(alarmSirene) {
 
@@ -226,6 +232,249 @@ namespace FactoryIOLibTest {
 			Assert::ExpectException<std::runtime_error, std::function<void(void)>>([&]() {
 				stackLight.setRedLight(true);
 				}, L"setSireneState did not rase a exception when no valid modbus addr is provided.");
+
+			mb.modbus_close();
+		}
+	};
+
+	TEST_CLASS(emmiter) {
+		TEST_METHOD(emmitState) {
+			modbus mb = modbus("127.0.0.1", 502);
+			mb.modbus_set_slave_id(1);
+			if (!mb.modbus_connect()) {
+				Assert::Fail(L"Couldn't connect to FactoryIO");
+			}
+
+			FactoryIO::emmiter_t emmiter(mb, 5, 1, 0);
+
+			emmiter.emmit(true);
+			std::this_thread::sleep_for(std::chrono::milliseconds(20));
+			Assert::AreEqual(true, getModbusCoilState(5, mb), L"emmit didn't turn on");
+
+			emmiter.emmit(false);
+			std::this_thread::sleep_for(std::chrono::milliseconds(20));
+			Assert::AreEqual(false, getModbusCoilState(5, mb), L"emmit didn't turn off");
+
+			mb.modbus_close();
+		}
+
+		TEST_METHOD(emmitBase) {
+			modbus mb = modbus("127.0.0.1", 502);
+			mb.modbus_set_slave_id(1);
+			if (!mb.modbus_connect()) {
+				Assert::Fail(L"Couldn't connect to FactoryIO");
+			}
+
+			FactoryIO::emmiter_t emmiter(mb, 5, 1, 0);
+
+			emmiter.emmit(true);
+			emmiter.setBase({ FactoryIO::baseToEmmit_t::PALLET });
+			std::this_thread::sleep_for(std::chrono::milliseconds(20));
+			Assert::AreEqual(true, getModbusCoilState(5, mb), L"emmit didn't turn on");
+			Assert::AreEqual((uint16_t)0b00000000000000001, getModbusRegState(0, mb), L"Pallet bit didn't turn on");
+
+			emmiter.setBase({ FactoryIO::baseToEmmit_t::PALLET, FactoryIO::baseToEmmit_t::SQARE_PALLET });
+			std::this_thread::sleep_for(std::chrono::milliseconds(20));
+			Assert::AreEqual((uint16_t)0b00000000000000011, getModbusRegState(0, mb), L"emmiter base missmatch");
+
+			emmiter.setBase({ FactoryIO::baseToEmmit_t::PALLET, FactoryIO::baseToEmmit_t::SQARE_PALLET, FactoryIO::baseToEmmit_t::STACKABLE_BOX });
+			std::this_thread::sleep_for(std::chrono::milliseconds(20));
+			Assert::AreEqual((uint16_t)0b00000000000000111, getModbusRegState(0, mb), L"emmiter base missmatch");
+
+			emmiter.setBase({ FactoryIO::baseToEmmit_t::NO_BASE });
+			std::this_thread::sleep_for(std::chrono::milliseconds(20));
+			Assert::AreEqual((uint16_t)0b00000000000000000, getModbusRegState(0, mb), L"emmiter base didn't clear");
+
+			emmiter.emmit(false);
+			mb.modbus_close();
+		}
+
+		TEST_METHOD(emmitPart) {
+			using namespace FactoryIO;
+			modbus mb = modbus("127.0.0.1", 502);
+			mb.modbus_set_slave_id(1);
+			if (!mb.modbus_connect()) {
+				Assert::Fail(L"Couldn't connect to FactoryIO");
+			}
+
+			FactoryIO::emmiter_t emmiter(mb, 5, 1, 0);
+
+			emmiter.emmit(true);
+			emmiter.setParts({ PartToEmmit_t::SMALL_BOX });
+			std::this_thread::sleep_for(std::chrono::milliseconds(20));
+			Assert::AreEqual(true, getModbusCoilState(5, mb), L"emmit didn't turn on");
+			Assert::AreEqual((uint16_t)0b00000000000000001, getModbusRegState(1, mb), L"emmiter part missmatch");
+
+			emmiter.setParts({ FactoryIO::PartToEmmit_t::SMALL_BOX, PartToEmmit_t::MEDIUM_BOX });
+			std::this_thread::sleep_for(std::chrono::milliseconds(20));
+			Assert::AreEqual((uint16_t)0b00000000000000011, getModbusRegState(1, mb), L"emmiter part missmatch");
+
+			emmiter.setParts({ FactoryIO::PartToEmmit_t::SMALL_BOX, PartToEmmit_t::MEDIUM_BOX, PartToEmmit_t::LARGE_BOX });
+			std::this_thread::sleep_for(std::chrono::milliseconds(20));
+			Assert::AreEqual((uint16_t)0b00000000000000111, getModbusRegState(1, mb), L"emmiter part missmatch");
+
+			emmiter.setParts({ FactoryIO::PartToEmmit_t::SMALL_BOX, PartToEmmit_t::MEDIUM_BOX, PartToEmmit_t::LARGE_BOX, PartToEmmit_t::PALLETIZING_BOX });
+			std::this_thread::sleep_for(std::chrono::milliseconds(20));
+			Assert::AreEqual((uint16_t)0b00000000000001111, getModbusRegState(1, mb), L"emmiter part missmatch");
+
+			emmiter.setParts({ FactoryIO::PartToEmmit_t::SMALL_BOX, 
+				PartToEmmit_t::MEDIUM_BOX, 
+				PartToEmmit_t::LARGE_BOX, 
+				PartToEmmit_t::PALLETIZING_BOX, 
+				PartToEmmit_t::BLUE_RAW_MATERIAL 
+				});
+			std::this_thread::sleep_for(std::chrono::milliseconds(20));
+			Assert::AreEqual((uint16_t)0b00000000000011111, getModbusRegState(1, mb), L"emmiter part missmatch");
+
+			emmiter.setParts({ FactoryIO::PartToEmmit_t::SMALL_BOX,
+				PartToEmmit_t::MEDIUM_BOX,
+				PartToEmmit_t::LARGE_BOX,
+				PartToEmmit_t::PALLETIZING_BOX,
+				PartToEmmit_t::BLUE_RAW_MATERIAL,
+				PartToEmmit_t::GREEN_RAW_MATERIAL
+				});
+			std::this_thread::sleep_for(std::chrono::milliseconds(20));
+			Assert::AreEqual((uint16_t)0b00000000000111111, getModbusRegState(1, mb), L"emmiter part missmatch");
+
+			emmiter.setParts({ FactoryIO::PartToEmmit_t::SMALL_BOX,
+				PartToEmmit_t::MEDIUM_BOX,
+				PartToEmmit_t::LARGE_BOX,
+				PartToEmmit_t::PALLETIZING_BOX,
+				PartToEmmit_t::BLUE_RAW_MATERIAL,
+				PartToEmmit_t::GREEN_RAW_MATERIAL,
+				PartToEmmit_t::METTAL_RAW_MATERIAL
+				});
+			std::this_thread::sleep_for(std::chrono::milliseconds(20));
+			Assert::AreEqual((uint16_t)0b00000000001111111, getModbusRegState(1, mb), L"emmiter part missmatch");
+
+			emmiter.setParts({ FactoryIO::PartToEmmit_t::SMALL_BOX,
+				PartToEmmit_t::MEDIUM_BOX,
+				PartToEmmit_t::LARGE_BOX,
+				PartToEmmit_t::PALLETIZING_BOX,
+				PartToEmmit_t::BLUE_RAW_MATERIAL,
+				PartToEmmit_t::GREEN_RAW_MATERIAL,
+				PartToEmmit_t::METTAL_RAW_MATERIAL,
+				PartToEmmit_t::BLUE_PRODUCT_BASE
+				});
+			std::this_thread::sleep_for(std::chrono::milliseconds(20));
+			Assert::AreEqual((uint16_t)0b00000000011111111, getModbusRegState(1, mb), L"emmiter part missmatch");
+
+			emmiter.setParts({ FactoryIO::PartToEmmit_t::SMALL_BOX,
+				PartToEmmit_t::MEDIUM_BOX,
+				PartToEmmit_t::LARGE_BOX,
+				PartToEmmit_t::PALLETIZING_BOX,
+				PartToEmmit_t::BLUE_RAW_MATERIAL,
+				PartToEmmit_t::GREEN_RAW_MATERIAL,
+				PartToEmmit_t::METTAL_RAW_MATERIAL,
+				PartToEmmit_t::BLUE_PRODUCT_BASE,
+				PartToEmmit_t::GREEN_PRODUCT_BASE
+				});
+			std::this_thread::sleep_for(std::chrono::milliseconds(20));
+			Assert::AreEqual((uint16_t)0b00000000111111111, getModbusRegState(1, mb), L"emmiter part missmatch");
+
+			emmiter.setParts({ FactoryIO::PartToEmmit_t::SMALL_BOX,
+				PartToEmmit_t::MEDIUM_BOX,
+				PartToEmmit_t::LARGE_BOX,
+				PartToEmmit_t::PALLETIZING_BOX,
+				PartToEmmit_t::BLUE_RAW_MATERIAL,
+				PartToEmmit_t::GREEN_RAW_MATERIAL,
+				PartToEmmit_t::METTAL_RAW_MATERIAL,
+				PartToEmmit_t::BLUE_PRODUCT_BASE,
+				PartToEmmit_t::GREEN_PRODUCT_BASE,
+				PartToEmmit_t::METTAL_PRODUCT_BASE
+				});
+			std::this_thread::sleep_for(std::chrono::milliseconds(20));
+			Assert::AreEqual((uint16_t)0b00000001111111111, getModbusRegState(1, mb), L"emmiter part missmatch");
+
+			emmiter.setParts({ FactoryIO::PartToEmmit_t::SMALL_BOX,
+				PartToEmmit_t::MEDIUM_BOX,
+				PartToEmmit_t::LARGE_BOX,
+				PartToEmmit_t::PALLETIZING_BOX,
+				PartToEmmit_t::BLUE_RAW_MATERIAL,
+				PartToEmmit_t::GREEN_RAW_MATERIAL,
+				PartToEmmit_t::METTAL_RAW_MATERIAL,
+				PartToEmmit_t::BLUE_PRODUCT_BASE,
+				PartToEmmit_t::GREEN_PRODUCT_BASE,
+				PartToEmmit_t::METTAL_PRODUCT_BASE,
+				PartToEmmit_t::BLUE_PRODUCT_LID
+				});
+			std::this_thread::sleep_for(std::chrono::milliseconds(20));
+			Assert::AreEqual((uint16_t)0b00000011111111111, getModbusRegState(1, mb), L"emmiter part missmatch");
+
+			emmiter.setParts({ FactoryIO::PartToEmmit_t::SMALL_BOX,
+				PartToEmmit_t::MEDIUM_BOX,
+				PartToEmmit_t::LARGE_BOX,
+				PartToEmmit_t::PALLETIZING_BOX,
+				PartToEmmit_t::BLUE_RAW_MATERIAL,
+				PartToEmmit_t::GREEN_RAW_MATERIAL,
+				PartToEmmit_t::METTAL_RAW_MATERIAL,
+				PartToEmmit_t::BLUE_PRODUCT_BASE,
+				PartToEmmit_t::GREEN_PRODUCT_BASE,
+				PartToEmmit_t::METTAL_PRODUCT_BASE,
+				PartToEmmit_t::BLUE_PRODUCT_LID,
+				PartToEmmit_t::GREEN_PRODUCT_LID
+				});
+			std::this_thread::sleep_for(std::chrono::milliseconds(20));
+			Assert::AreEqual((uint16_t)0b00000111111111111, getModbusRegState(1, mb), L"emmiter part missmatch");
+
+			emmiter.setParts({ FactoryIO::PartToEmmit_t::SMALL_BOX,
+				PartToEmmit_t::MEDIUM_BOX,
+				PartToEmmit_t::LARGE_BOX,
+				PartToEmmit_t::PALLETIZING_BOX,
+				PartToEmmit_t::BLUE_RAW_MATERIAL,
+				PartToEmmit_t::GREEN_RAW_MATERIAL,
+				PartToEmmit_t::METTAL_RAW_MATERIAL,
+				PartToEmmit_t::BLUE_PRODUCT_BASE,
+				PartToEmmit_t::GREEN_PRODUCT_BASE,
+				PartToEmmit_t::METTAL_PRODUCT_BASE,
+				PartToEmmit_t::BLUE_PRODUCT_LID,
+				PartToEmmit_t::GREEN_PRODUCT_LID,
+				PartToEmmit_t::METTAL_PRODUCT_LID
+				});
+			std::this_thread::sleep_for(std::chrono::milliseconds(20));
+			Assert::AreEqual((uint16_t)0b00001111111111111, getModbusRegState(1, mb), L"emmiter part missmatch");
+
+			emmiter.setParts({ FactoryIO::PartToEmmit_t::SMALL_BOX,
+				PartToEmmit_t::MEDIUM_BOX,
+				PartToEmmit_t::LARGE_BOX,
+				PartToEmmit_t::PALLETIZING_BOX,
+				PartToEmmit_t::BLUE_RAW_MATERIAL,
+				PartToEmmit_t::GREEN_RAW_MATERIAL,
+				PartToEmmit_t::METTAL_RAW_MATERIAL,
+				PartToEmmit_t::BLUE_PRODUCT_BASE,
+				PartToEmmit_t::GREEN_PRODUCT_BASE,
+				PartToEmmit_t::METTAL_PRODUCT_BASE,
+				PartToEmmit_t::BLUE_PRODUCT_LID,
+				PartToEmmit_t::GREEN_PRODUCT_LID,
+				PartToEmmit_t::METTAL_PRODUCT_LID,
+				PartToEmmit_t::STACKABLE_BOX
+				});
+			std::this_thread::sleep_for(std::chrono::milliseconds(20));
+			Assert::AreEqual((uint16_t)0b00011111111111111, getModbusRegState(1, mb), L"emmiter part missmatch");
+
+			emmiter.emmit(false);
+			mb.modbus_close();
+		}
+
+		TEST_METHOD(noAddress) {
+			modbus mb = modbus("127.0.0.1", 502);
+			mb.modbus_set_slave_id(1);
+			if (!mb.modbus_connect()) {
+				Assert::Fail(L"Couldn't connect to FactoryIO");
+			}
+
+			FactoryIO::emmiter_t emmiter(mb, FactoryIO::NO_MODBUS_ADDR, FactoryIO::NO_MODBUS_ADDR, FactoryIO::NO_MODBUS_ADDR);
+			Assert::ExpectException<std::runtime_error, std::function<void(void)>>([&]() {
+				emmiter.emmit(true);
+				}, L"emmit did not rase a exception when no valid modbus addr is provided.");
+
+			Assert::ExpectException<std::runtime_error, std::function<void(void)>>([&]() {
+				emmiter.setBase({});
+				}, L"setBase did not rase a exception when no valid modbus addr is provided.");
+
+			Assert::ExpectException<std::runtime_error, std::function<void(void)>>([&]() {
+				emmiter.setParts({});
+				}, L"setParts did not rase a exception when no valid modbus addr is provided.");
 
 			mb.modbus_close();
 		}
