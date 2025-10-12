@@ -497,4 +497,76 @@ namespace FactoryIOLibTest {
 			}
 		}
 	};
+
+	TEST_CLASS(remover) {
+		TEST_METHOD(toRemoveBase) {
+			modbus mb = modbus("127.0.0.1", 502);
+			mb.modbus_set_slave_id(1);
+			if (!mb.modbus_connect()) {
+				Assert::Fail(L"Couldn't connect to FactoryIO");
+			}
+
+			FactoryIO::remover_t remover(mb, 3, 2, 1, 0);
+
+			uint16_t returnBitfield = 0;
+			uint16_t modbusReadValue = 0;
+
+			for (uint16_t toTestBitfield = 0; toTestBitfield < 0b0000000000000111; toTestBitfield++) {
+				remover.setBasesToRemove(FactoryIO::internal::BitfieldEnumMapper_t::toBases(toTestBitfield));
+
+				mb.modbus_read_holding_registers(2, 1, &modbusReadValue);
+				Assert::AreEqual((uint16_t)toTestBitfield, (uint16_t)modbusReadValue, L"bitfield doesn't match with expected bitfield.");
+			}
+
+			remover.setBasesToRemove({});
+			mb.modbus_close();
+		}
+
+		TEST_METHOD(toRemovePart) {
+			modbus mb = modbus("127.0.0.1", 502);
+			mb.modbus_set_slave_id(1);
+			if (!mb.modbus_connect()) {
+				Assert::Fail(L"Couldn't connect to FactoryIO");
+			}
+
+			FactoryIO::remover_t remover(mb, 3, 2, 1, 0);
+
+			uint16_t returnBitfield = 0;
+			uint16_t modbusReadValue = 0;
+
+			for (uint16_t toTestBitfield = 0; toTestBitfield < 0b0011111111111111; toTestBitfield++) {
+				remover.setPartsToRemove(FactoryIO::internal::BitfieldEnumMapper_t::toParts(toTestBitfield));
+
+				mb.modbus_read_holding_registers(3, 1, &modbusReadValue);
+				Assert::AreEqual((uint16_t)toTestBitfield, (uint16_t)modbusReadValue, L"bitfield doesn't match with expected bitfield.");
+			}
+			remover.setPartsToRemove({});
+			mb.modbus_close();
+		}
+
+		TEST_METHOD(noAdress) {
+			modbus mb = modbus("127.0.0.1", 502);
+			mb.modbus_set_slave_id(1);
+			if (!mb.modbus_connect()) {
+				Assert::Fail(L"Couldn't connect to FactoryIO");
+			}
+
+			FactoryIO::remover_t remover(mb, FactoryIO::NO_MODBUS_ADDR, FactoryIO::NO_MODBUS_ADDR, FactoryIO::NO_MODBUS_ADDR, FactoryIO::NO_MODBUS_ADDR);
+
+			Assert::ExpectException<std::runtime_error, std::function<void(void)>>([&]() {
+				remover.setBasesToRemove({});
+				}, L"setBasesToRemove did not rase a exception when no valid modbus addr is provided.");
+			Assert::ExpectException<std::runtime_error, std::function<void(void)>>([&]() {
+				remover.setPartsToRemove({});
+				}, L"setPartsToRemove did not rase a exception when no valid modbus addr is provided.");
+			Assert::ExpectException<std::runtime_error, std::function<void(void)>>([&]() {
+				remover.getDetectedBases();
+				}, L"getDetectedBases did not rase a exception when no valid modbus addr is provided.");
+			Assert::ExpectException<std::runtime_error, std::function<void(void)>>([&]() {
+				remover.getDetectedBases();
+				}, L"getDetectedBases did not rase a exception when no valid modbus addr is provided.");
+
+			mb.modbus_close();
+		}
+	};
 }

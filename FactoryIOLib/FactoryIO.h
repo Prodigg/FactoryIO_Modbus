@@ -20,3 +20,4 @@
 #include "WarningLight.h"
 #include "StackLight.h"
 #include "Emmiter.h"
+#include "remover.h"

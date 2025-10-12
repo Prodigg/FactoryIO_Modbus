@@ -51,6 +51,9 @@
     <ClCompile Include="Emmiter.cpp">
       <Filter>Quelldateien\Parts\Emmiter/Remover</Filter>
     </ClCompile>
+    <ClCompile Include="remover.cpp">
+      <Filter>Quelldateien\Parts\Emmiter/Remover</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="modbus.h">
@@ -69,6 +72,9 @@
       <Filter>Headerdateien\Parts\Warining Devices</Filter>
     </ClInclude>
     <ClInclude Include="Emmiter.h">
+      <Filter>Headerdateien\Parts\Emmiter/Remover</Filter>
+    </ClInclude>
+    <ClInclude Include="remover.h">
       <Filter>Headerdateien\Parts\Emmiter/Remover</Filter>
     </ClInclude>
   </ItemGroup>
