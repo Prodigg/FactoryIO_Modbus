@@ -268,20 +268,20 @@ namespace FactoryIOLibTest {
 			FactoryIO::emmiter_t emmiter(mb, 5, 1, 0);
 
 			emmiter.emmit(true);
-			emmiter.setBase({ FactoryIO::baseToEmmit_t::PALLET });
+			emmiter.setBase({ FactoryIO::Bases_t::PALLET });
 			std::this_thread::sleep_for(std::chrono::milliseconds(20));
 			Assert::AreEqual(true, getModbusCoilState(5, mb), L"emmit didn't turn on");
 			Assert::AreEqual((uint16_t)0b00000000000000001, getModbusRegState(0, mb), L"Pallet bit didn't turn on");
 
-			emmiter.setBase({ FactoryIO::baseToEmmit_t::PALLET, FactoryIO::baseToEmmit_t::SQARE_PALLET });
+			emmiter.setBase({ FactoryIO::Bases_t::PALLET, FactoryIO::Bases_t::SQARE_PALLET });
 			std::this_thread::sleep_for(std::chrono::milliseconds(20));
 			Assert::AreEqual((uint16_t)0b00000000000000011, getModbusRegState(0, mb), L"emmiter base missmatch");
 
-			emmiter.setBase({ FactoryIO::baseToEmmit_t::PALLET, FactoryIO::baseToEmmit_t::SQARE_PALLET, FactoryIO::baseToEmmit_t::STACKABLE_BOX });
+			emmiter.setBase({ FactoryIO::Bases_t::PALLET, FactoryIO::Bases_t::SQARE_PALLET, FactoryIO::Bases_t::STACKABLE_BOX });
 			std::this_thread::sleep_for(std::chrono::milliseconds(20));
 			Assert::AreEqual((uint16_t)0b00000000000000111, getModbusRegState(0, mb), L"emmiter base missmatch");
 
-			emmiter.setBase({ FactoryIO::baseToEmmit_t::NO_BASE });
+			emmiter.setBase({ FactoryIO::Bases_t::NO_BASE });
 			std::this_thread::sleep_for(std::chrono::milliseconds(20));
 			Assert::AreEqual((uint16_t)0b00000000000000000, getModbusRegState(0, mb), L"emmiter base didn't clear");
 
@@ -300,154 +300,154 @@ namespace FactoryIOLibTest {
 			FactoryIO::emmiter_t emmiter(mb, 5, 1, 0);
 
 			emmiter.emmit(true);
-			emmiter.setParts({ PartToEmmit_t::SMALL_BOX });
+			emmiter.setParts({ Parts_t::SMALL_BOX });
 			std::this_thread::sleep_for(std::chrono::milliseconds(20));
 			Assert::AreEqual(true, getModbusCoilState(5, mb), L"emmit didn't turn on");
 			Assert::AreEqual((uint16_t)0b00000000000000001, getModbusRegState(1, mb), L"emmiter part missmatch");
 
-			emmiter.setParts({ FactoryIO::PartToEmmit_t::SMALL_BOX, PartToEmmit_t::MEDIUM_BOX });
+			emmiter.setParts({ FactoryIO::Parts_t::SMALL_BOX, Parts_t::MEDIUM_BOX });
 			std::this_thread::sleep_for(std::chrono::milliseconds(20));
 			Assert::AreEqual((uint16_t)0b00000000000000011, getModbusRegState(1, mb), L"emmiter part missmatch");
 
-			emmiter.setParts({ FactoryIO::PartToEmmit_t::SMALL_BOX, PartToEmmit_t::MEDIUM_BOX, PartToEmmit_t::LARGE_BOX });
+			emmiter.setParts({ FactoryIO::Parts_t::SMALL_BOX, Parts_t::MEDIUM_BOX, Parts_t::LARGE_BOX });
 			std::this_thread::sleep_for(std::chrono::milliseconds(20));
 			Assert::AreEqual((uint16_t)0b00000000000000111, getModbusRegState(1, mb), L"emmiter part missmatch");
 
-			emmiter.setParts({ FactoryIO::PartToEmmit_t::SMALL_BOX, PartToEmmit_t::MEDIUM_BOX, PartToEmmit_t::LARGE_BOX, PartToEmmit_t::PALLETIZING_BOX });
+			emmiter.setParts({ FactoryIO::Parts_t::SMALL_BOX, Parts_t::MEDIUM_BOX, Parts_t::LARGE_BOX, Parts_t::PALLETIZING_BOX });
 			std::this_thread::sleep_for(std::chrono::milliseconds(20));
 			Assert::AreEqual((uint16_t)0b00000000000001111, getModbusRegState(1, mb), L"emmiter part missmatch");
 
-			emmiter.setParts({ FactoryIO::PartToEmmit_t::SMALL_BOX, 
-				PartToEmmit_t::MEDIUM_BOX, 
-				PartToEmmit_t::LARGE_BOX, 
-				PartToEmmit_t::PALLETIZING_BOX, 
-				PartToEmmit_t::BLUE_RAW_MATERIAL 
+			emmiter.setParts({ FactoryIO::Parts_t::SMALL_BOX, 
+				Parts_t::MEDIUM_BOX, 
+				Parts_t::LARGE_BOX, 
+				Parts_t::PALLETIZING_BOX, 
+				Parts_t::BLUE_RAW_MATERIAL 
 				});
 			std::this_thread::sleep_for(std::chrono::milliseconds(20));
 			Assert::AreEqual((uint16_t)0b00000000000011111, getModbusRegState(1, mb), L"emmiter part missmatch");
 
-			emmiter.setParts({ FactoryIO::PartToEmmit_t::SMALL_BOX,
-				PartToEmmit_t::MEDIUM_BOX,
-				PartToEmmit_t::LARGE_BOX,
-				PartToEmmit_t::PALLETIZING_BOX,
-				PartToEmmit_t::BLUE_RAW_MATERIAL,
-				PartToEmmit_t::GREEN_RAW_MATERIAL
+			emmiter.setParts({ FactoryIO::Parts_t::SMALL_BOX,
+				Parts_t::MEDIUM_BOX,
+				Parts_t::LARGE_BOX,
+				Parts_t::PALLETIZING_BOX,
+				Parts_t::BLUE_RAW_MATERIAL,
+				Parts_t::GREEN_RAW_MATERIAL
 				});
 			std::this_thread::sleep_for(std::chrono::milliseconds(20));
 			Assert::AreEqual((uint16_t)0b00000000000111111, getModbusRegState(1, mb), L"emmiter part missmatch");
 
-			emmiter.setParts({ FactoryIO::PartToEmmit_t::SMALL_BOX,
-				PartToEmmit_t::MEDIUM_BOX,
-				PartToEmmit_t::LARGE_BOX,
-				PartToEmmit_t::PALLETIZING_BOX,
-				PartToEmmit_t::BLUE_RAW_MATERIAL,
-				PartToEmmit_t::GREEN_RAW_MATERIAL,
-				PartToEmmit_t::METTAL_RAW_MATERIAL
+			emmiter.setParts({ FactoryIO::Parts_t::SMALL_BOX,
+				Parts_t::MEDIUM_BOX,
+				Parts_t::LARGE_BOX,
+				Parts_t::PALLETIZING_BOX,
+				Parts_t::BLUE_RAW_MATERIAL,
+				Parts_t::GREEN_RAW_MATERIAL,
+				Parts_t::METTAL_RAW_MATERIAL
 				});
 			std::this_thread::sleep_for(std::chrono::milliseconds(20));
 			Assert::AreEqual((uint16_t)0b00000000001111111, getModbusRegState(1, mb), L"emmiter part missmatch");
 
-			emmiter.setParts({ FactoryIO::PartToEmmit_t::SMALL_BOX,
-				PartToEmmit_t::MEDIUM_BOX,
-				PartToEmmit_t::LARGE_BOX,
-				PartToEmmit_t::PALLETIZING_BOX,
-				PartToEmmit_t::BLUE_RAW_MATERIAL,
-				PartToEmmit_t::GREEN_RAW_MATERIAL,
-				PartToEmmit_t::METTAL_RAW_MATERIAL,
-				PartToEmmit_t::BLUE_PRODUCT_BASE
+			emmiter.setParts({ FactoryIO::Parts_t::SMALL_BOX,
+				Parts_t::MEDIUM_BOX,
+				Parts_t::LARGE_BOX,
+				Parts_t::PALLETIZING_BOX,
+				Parts_t::BLUE_RAW_MATERIAL,
+				Parts_t::GREEN_RAW_MATERIAL,
+				Parts_t::METTAL_RAW_MATERIAL,
+				Parts_t::BLUE_PRODUCT_BASE
 				});
 			std::this_thread::sleep_for(std::chrono::milliseconds(20));
 			Assert::AreEqual((uint16_t)0b00000000011111111, getModbusRegState(1, mb), L"emmiter part missmatch");
 
-			emmiter.setParts({ FactoryIO::PartToEmmit_t::SMALL_BOX,
-				PartToEmmit_t::MEDIUM_BOX,
-				PartToEmmit_t::LARGE_BOX,
-				PartToEmmit_t::PALLETIZING_BOX,
-				PartToEmmit_t::BLUE_RAW_MATERIAL,
-				PartToEmmit_t::GREEN_RAW_MATERIAL,
-				PartToEmmit_t::METTAL_RAW_MATERIAL,
-				PartToEmmit_t::BLUE_PRODUCT_BASE,
-				PartToEmmit_t::GREEN_PRODUCT_BASE
+			emmiter.setParts({ FactoryIO::Parts_t::SMALL_BOX,
+				Parts_t::MEDIUM_BOX,
+				Parts_t::LARGE_BOX,
+				Parts_t::PALLETIZING_BOX,
+				Parts_t::BLUE_RAW_MATERIAL,
+				Parts_t::GREEN_RAW_MATERIAL,
+				Parts_t::METTAL_RAW_MATERIAL,
+				Parts_t::BLUE_PRODUCT_BASE,
+				Parts_t::GREEN_PRODUCT_BASE
 				});
 			std::this_thread::sleep_for(std::chrono::milliseconds(20));
 			Assert::AreEqual((uint16_t)0b00000000111111111, getModbusRegState(1, mb), L"emmiter part missmatch");
 
-			emmiter.setParts({ FactoryIO::PartToEmmit_t::SMALL_BOX,
-				PartToEmmit_t::MEDIUM_BOX,
-				PartToEmmit_t::LARGE_BOX,
-				PartToEmmit_t::PALLETIZING_BOX,
-				PartToEmmit_t::BLUE_RAW_MATERIAL,
-				PartToEmmit_t::GREEN_RAW_MATERIAL,
-				PartToEmmit_t::METTAL_RAW_MATERIAL,
-				PartToEmmit_t::BLUE_PRODUCT_BASE,
-				PartToEmmit_t::GREEN_PRODUCT_BASE,
-				PartToEmmit_t::METTAL_PRODUCT_BASE
+			emmiter.setParts({ FactoryIO::Parts_t::SMALL_BOX,
+				Parts_t::MEDIUM_BOX,
+				Parts_t::LARGE_BOX,
+				Parts_t::PALLETIZING_BOX,
+				Parts_t::BLUE_RAW_MATERIAL,
+				Parts_t::GREEN_RAW_MATERIAL,
+				Parts_t::METTAL_RAW_MATERIAL,
+				Parts_t::BLUE_PRODUCT_BASE,
+				Parts_t::GREEN_PRODUCT_BASE,
+				Parts_t::METTAL_PRODUCT_BASE
 				});
 			std::this_thread::sleep_for(std::chrono::milliseconds(20));
 			Assert::AreEqual((uint16_t)0b00000001111111111, getModbusRegState(1, mb), L"emmiter part missmatch");
 
-			emmiter.setParts({ FactoryIO::PartToEmmit_t::SMALL_BOX,
-				PartToEmmit_t::MEDIUM_BOX,
-				PartToEmmit_t::LARGE_BOX,
-				PartToEmmit_t::PALLETIZING_BOX,
-				PartToEmmit_t::BLUE_RAW_MATERIAL,
-				PartToEmmit_t::GREEN_RAW_MATERIAL,
-				PartToEmmit_t::METTAL_RAW_MATERIAL,
-				PartToEmmit_t::BLUE_PRODUCT_BASE,
-				PartToEmmit_t::GREEN_PRODUCT_BASE,
-				PartToEmmit_t::METTAL_PRODUCT_BASE,
-				PartToEmmit_t::BLUE_PRODUCT_LID
+			emmiter.setParts({ FactoryIO::Parts_t::SMALL_BOX,
+				Parts_t::MEDIUM_BOX,
+				Parts_t::LARGE_BOX,
+				Parts_t::PALLETIZING_BOX,
+				Parts_t::BLUE_RAW_MATERIAL,
+				Parts_t::GREEN_RAW_MATERIAL,
+				Parts_t::METTAL_RAW_MATERIAL,
+				Parts_t::BLUE_PRODUCT_BASE,
+				Parts_t::GREEN_PRODUCT_BASE,
+				Parts_t::METTAL_PRODUCT_BASE,
+				Parts_t::BLUE_PRODUCT_LID
 				});
 			std::this_thread::sleep_for(std::chrono::milliseconds(20));
 			Assert::AreEqual((uint16_t)0b00000011111111111, getModbusRegState(1, mb), L"emmiter part missmatch");
 
-			emmiter.setParts({ FactoryIO::PartToEmmit_t::SMALL_BOX,
-				PartToEmmit_t::MEDIUM_BOX,
-				PartToEmmit_t::LARGE_BOX,
-				PartToEmmit_t::PALLETIZING_BOX,
-				PartToEmmit_t::BLUE_RAW_MATERIAL,
-				PartToEmmit_t::GREEN_RAW_MATERIAL,
-				PartToEmmit_t::METTAL_RAW_MATERIAL,
-				PartToEmmit_t::BLUE_PRODUCT_BASE,
-				PartToEmmit_t::GREEN_PRODUCT_BASE,
-				PartToEmmit_t::METTAL_PRODUCT_BASE,
-				PartToEmmit_t::BLUE_PRODUCT_LID,
-				PartToEmmit_t::GREEN_PRODUCT_LID
+			emmiter.setParts({ FactoryIO::Parts_t::SMALL_BOX,
+				Parts_t::MEDIUM_BOX,
+				Parts_t::LARGE_BOX,
+				Parts_t::PALLETIZING_BOX,
+				Parts_t::BLUE_RAW_MATERIAL,
+				Parts_t::GREEN_RAW_MATERIAL,
+				Parts_t::METTAL_RAW_MATERIAL,
+				Parts_t::BLUE_PRODUCT_BASE,
+				Parts_t::GREEN_PRODUCT_BASE,
+				Parts_t::METTAL_PRODUCT_BASE,
+				Parts_t::BLUE_PRODUCT_LID,
+				Parts_t::GREEN_PRODUCT_LID
 				});
 			std::this_thread::sleep_for(std::chrono::milliseconds(20));
 			Assert::AreEqual((uint16_t)0b00000111111111111, getModbusRegState(1, mb), L"emmiter part missmatch");
 
-			emmiter.setParts({ FactoryIO::PartToEmmit_t::SMALL_BOX,
-				PartToEmmit_t::MEDIUM_BOX,
-				PartToEmmit_t::LARGE_BOX,
-				PartToEmmit_t::PALLETIZING_BOX,
-				PartToEmmit_t::BLUE_RAW_MATERIAL,
-				PartToEmmit_t::GREEN_RAW_MATERIAL,
-				PartToEmmit_t::METTAL_RAW_MATERIAL,
-				PartToEmmit_t::BLUE_PRODUCT_BASE,
-				PartToEmmit_t::GREEN_PRODUCT_BASE,
-				PartToEmmit_t::METTAL_PRODUCT_BASE,
-				PartToEmmit_t::BLUE_PRODUCT_LID,
-				PartToEmmit_t::GREEN_PRODUCT_LID,
-				PartToEmmit_t::METTAL_PRODUCT_LID
+			emmiter.setParts({ FactoryIO::Parts_t::SMALL_BOX,
+				Parts_t::MEDIUM_BOX,
+				Parts_t::LARGE_BOX,
+				Parts_t::PALLETIZING_BOX,
+				Parts_t::BLUE_RAW_MATERIAL,
+				Parts_t::GREEN_RAW_MATERIAL,
+				Parts_t::METTAL_RAW_MATERIAL,
+				Parts_t::BLUE_PRODUCT_BASE,
+				Parts_t::GREEN_PRODUCT_BASE,
+				Parts_t::METTAL_PRODUCT_BASE,
+				Parts_t::BLUE_PRODUCT_LID,
+				Parts_t::GREEN_PRODUCT_LID,
+				Parts_t::METTAL_PRODUCT_LID
 				});
 			std::this_thread::sleep_for(std::chrono::milliseconds(20));
 			Assert::AreEqual((uint16_t)0b00001111111111111, getModbusRegState(1, mb), L"emmiter part missmatch");
 
-			emmiter.setParts({ FactoryIO::PartToEmmit_t::SMALL_BOX,
-				PartToEmmit_t::MEDIUM_BOX,
-				PartToEmmit_t::LARGE_BOX,
-				PartToEmmit_t::PALLETIZING_BOX,
-				PartToEmmit_t::BLUE_RAW_MATERIAL,
-				PartToEmmit_t::GREEN_RAW_MATERIAL,
-				PartToEmmit_t::METTAL_RAW_MATERIAL,
-				PartToEmmit_t::BLUE_PRODUCT_BASE,
-				PartToEmmit_t::GREEN_PRODUCT_BASE,
-				PartToEmmit_t::METTAL_PRODUCT_BASE,
-				PartToEmmit_t::BLUE_PRODUCT_LID,
-				PartToEmmit_t::GREEN_PRODUCT_LID,
-				PartToEmmit_t::METTAL_PRODUCT_LID,
-				PartToEmmit_t::STACKABLE_BOX
+			emmiter.setParts({ FactoryIO::Parts_t::SMALL_BOX,
+				Parts_t::MEDIUM_BOX,
+				Parts_t::LARGE_BOX,
+				Parts_t::PALLETIZING_BOX,
+				Parts_t::BLUE_RAW_MATERIAL,
+				Parts_t::GREEN_RAW_MATERIAL,
+				Parts_t::METTAL_RAW_MATERIAL,
+				Parts_t::BLUE_PRODUCT_BASE,
+				Parts_t::GREEN_PRODUCT_BASE,
+				Parts_t::METTAL_PRODUCT_BASE,
+				Parts_t::BLUE_PRODUCT_LID,
+				Parts_t::GREEN_PRODUCT_LID,
+				Parts_t::METTAL_PRODUCT_LID,
+				Parts_t::STACKABLE_BOX
 				});
 			std::this_thread::sleep_for(std::chrono::milliseconds(20));
 			Assert::AreEqual((uint16_t)0b00011111111111111, getModbusRegState(1, mb), L"emmiter part missmatch");
@@ -477,6 +477,24 @@ namespace FactoryIOLibTest {
 				}, L"setParts did not rase a exception when no valid modbus addr is provided.");
 
 			mb.modbus_close();
+		}
+	};
+
+	TEST_CLASS(BitfieldEnumMapper) {
+		TEST_METHOD(Parts) {
+			uint16_t returnBitfield = 0;
+			for (uint16_t toTestBitfield = 0; toTestBitfield < 0b0011111111111111; toTestBitfield++) {
+				returnBitfield = FactoryIO::internal::BitfieldEnumMapper_t::toBitfield(FactoryIO::internal::BitfieldEnumMapper_t::toParts(toTestBitfield));
+				Assert::AreEqual((uint16_t)toTestBitfield, (uint16_t)returnBitfield, L"bitfield don't match, conversion not working.");
+			}
+		}
+
+		TEST_METHOD(Bases) {
+			uint16_t returnBitfield = 0;
+			for (uint16_t toTestBitfield = 0; toTestBitfield < 0b0000000000000111; toTestBitfield++) {
+				returnBitfield = FactoryIO::internal::BitfieldEnumMapper_t::toBitfield(FactoryIO::internal::BitfieldEnumMapper_t::toBases(toTestBitfield));
+				Assert::AreEqual((uint16_t)toTestBitfield, (uint16_t)returnBitfield, L"bitfield don't match, conversion not working.");
+			}
 		}
 	};
 }
