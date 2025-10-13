@@ -12,7 +12,7 @@ void FactoryIO::emmiter_t::emmit(bool state) {
 	updateFactoryIO();
 }
 
-void FactoryIO::emmiter_t::setParts(std::vector<Parts_t> partsToEmmit) {
+void FactoryIO::emmiter_t::setParts(const std::vector<Parts_t> partsToEmmit) {
 	FactoryIO::internal::checkModbusAddr(_partAddr);
 
 	_part = 0; 
@@ -20,7 +20,7 @@ void FactoryIO::emmiter_t::setParts(std::vector<Parts_t> partsToEmmit) {
 	updateFactoryIO();
 }
 
-void FactoryIO::emmiter_t::setBase(std::vector<Bases_t> basesToEmmit) {
+void FactoryIO::emmiter_t::setBase(const std::vector<Bases_t> basesToEmmit) {
 	FactoryIO::internal::checkModbusAddr(_baseAddr);
 
 	_base = 0;

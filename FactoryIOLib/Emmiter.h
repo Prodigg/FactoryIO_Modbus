@@ -9,8 +9,8 @@ namespace FactoryIO {
 	public:
 		emmiter_t(modbus& mb, modbusAddr_t emmitAddr, modbusAddr_t partAddr, modbusAddr_t baseAddr);
 		void emmit(bool state);
-		void setParts(std::vector<Parts_t> partsToEmmit);
-		void setBase(std::vector<Bases_t> basesToEmmit);
+		void setParts(const std::vector<Parts_t> partsToEmmit);
+		void setBase(const std::vector<Bases_t> basesToEmmit);
 
 	private:
 		void updateFactoryIO();

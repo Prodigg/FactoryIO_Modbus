@@ -53,7 +53,32 @@ namespace FactoryIO {
 		};
 	}
 
-	
+	namespace presets {
+		inline const std::vector<FactoryIO::Parts_t> allParts = {
+		Parts_t::NO_PART,
+		Parts_t::SMALL_BOX,
+		Parts_t::MEDIUM_BOX,
+		Parts_t::LARGE_BOX,
+		Parts_t::PALLETIZING_BOX,
+		Parts_t::BLUE_RAW_MATERIAL,
+		Parts_t::GREEN_RAW_MATERIAL,
+		Parts_t::METTAL_RAW_MATERIAL,
+		Parts_t::BLUE_PRODUCT_BASE,
+		Parts_t::GREEN_PRODUCT_BASE,
+		Parts_t::METTAL_PRODUCT_BASE,
+		Parts_t::BLUE_PRODUCT_LID,
+		Parts_t::GREEN_PRODUCT_LID,
+		Parts_t::METTAL_PRODUCT_LID,
+		Parts_t::STACKABLE_BOX
+		};
+
+		inline const std::vector<FactoryIO::Bases_t> allBases = {
+		Bases_t::NO_BASE,
+		Bases_t::PALLET,
+		Bases_t::SQARE_PALLET,
+		Bases_t::STACKABLE_BOX
+		};
+	}
 
 
 }

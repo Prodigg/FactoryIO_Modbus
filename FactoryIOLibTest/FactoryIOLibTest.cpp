@@ -19,54 +19,51 @@ uint16_t getModbusRegState(FactoryIO::modbusAddr_t addr, modbus& mb) {
 	return tmp;
 }
 
-namespace FactoryIOLibTest {
+namespace FactoryIOLibTest_module {
 	TEST_CLASS(alarmSirene) {
+	TEST_METHOD(turnOnOff) {
+		modbus mb = modbus("127.0.0.1", 502);
+		mb.modbus_set_slave_id(1);
+		if (!mb.modbus_connect()) {
+			Assert::Fail(L"Couldn't connect to FactoryIO");
+		}
+		FactoryIO::alarmSiren_t alarmSirene(mb, 0);
+		bool ModbusServerSireneOn = false;
 
-	public:
+		///// check if sirene turnes on
 
-		TEST_METHOD(turnOnOff) {
-			modbus mb = modbus("127.0.0.1", 502);
-			mb.modbus_set_slave_id(1);
-			if (!mb.modbus_connect()) {
-				Assert::Fail(L"Couldn't connect to FactoryIO");
-			}
-			FactoryIO::alarmSiren_t alarmSirene(mb, 0);
-			bool ModbusServerSireneOn = false;
+		alarmSirene.setSireneState(true);
 
-			///// check if sirene turnes on
+		std::this_thread::sleep_for(std::chrono::milliseconds(20));
 
+		mb.modbus_read_coils(0, 1, &ModbusServerSireneOn);
+		Assert::AreEqual(true, ModbusServerSireneOn, L"sirene didn't turn on");
+
+		///// check if sirene turnes off
+
+		alarmSirene.setSireneState(false);
+
+		std::this_thread::sleep_for(std::chrono::milliseconds(20));
+
+		mb.modbus_read_coils(0, 1, &ModbusServerSireneOn);
+		Assert::AreEqual(false, ModbusServerSireneOn, L"sirene didn't turn off");
+		mb.modbus_close();
+	}
+
+	TEST_METHOD(noAddress) {
+		modbus mb = modbus("127.0.0.1", 502);
+		mb.modbus_set_slave_id(1);
+		if (!mb.modbus_connect()) {
+			Assert::Fail(L"Couldn't connect to FactoryIO");
+		}
+
+		FactoryIO::alarmSiren_t alarmSirene(mb, FactoryIO::NO_MODBUS_ADDR);
+		Assert::ExpectException<std::runtime_error, std::function<void(void)>>([&]() {
 			alarmSirene.setSireneState(true);
+			}, L"setSireneState did not rase a exception when no valid modbus addr is provided.");
 
-			std::this_thread::sleep_for(std::chrono::milliseconds(20));
-
-			mb.modbus_read_coils(0, 1, &ModbusServerSireneOn);
-			Assert::AreEqual(true, ModbusServerSireneOn, L"sirene didn't turn on");
-
-			///// check if sirene turnes off
-
-			alarmSirene.setSireneState(false);
-
-			std::this_thread::sleep_for(std::chrono::milliseconds(20));
-
-			mb.modbus_read_coils(0, 1, &ModbusServerSireneOn);
-			Assert::AreEqual(false, ModbusServerSireneOn, L"sirene didn't turn off");
-			mb.modbus_close();
-		}
-
-		TEST_METHOD(noAddress) {
-			modbus mb = modbus("127.0.0.1", 502);
-			mb.modbus_set_slave_id(1);
-			if (!mb.modbus_connect()) {
-				Assert::Fail(L"Couldn't connect to FactoryIO");
-			}
-
-			FactoryIO::alarmSiren_t alarmSirene(mb, FactoryIO::NO_MODBUS_ADDR);
-			Assert::ExpectException<std::runtime_error, std::function<void(void)>>([&]() {
-				alarmSirene.setSireneState(true);
-				}, L"setSireneState did not rase a exception when no valid modbus addr is provided.");
-
-			mb.modbus_close();
-		}
+		mb.modbus_close();
+	}
 	};
 
 	TEST_CLASS(warningLight) {
@@ -568,5 +565,60 @@ namespace FactoryIOLibTest {
 
 			mb.modbus_close();
 		}
+	};
+}
+
+
+namespace FactoryIOLibTest_integration {
+	TEST_CLASS(emmiterRemover) {
+		TEST_METHOD(spawningDeleting) {
+			modbus mb = modbus("127.0.0.1", 502);
+			mb.modbus_set_slave_id(1);
+			if (!mb.modbus_connect()) {
+				Assert::Fail(L"Couldn't connect to FactoryIO");
+			}
+
+			FactoryIO::remover_t remover(mb, 3, 2, 1, 0);
+			FactoryIO::emmiter_t emmiter(mb, 5, 1, 0);
+
+			emmiter.emmit(false);
+			remover.setBasesToRemove(FactoryIO::presets::allBases);
+			remover.setPartsToRemove(FactoryIO::presets::allParts);
+			std::this_thread::sleep_for(std::chrono::milliseconds(5000));
+			Assert::AreEqual((size_t)0, remover.getDetectedParts().size(), L"Remover didn't remove all parts");
+			Assert::AreEqual((size_t)0, remover.getDetectedBases().size(), L"Remover didn't remove all bases");
+			remover.setBasesToRemove({});
+			remover.setPartsToRemove({});
+
+			emmiter.setBase({});
+			for (size_t i = 1; i < 14; i++) {
+				emmiter.setParts(FactoryIO::internal::BitfieldEnumMapper_t::toParts((uint16_t)(1 << i)));
+				emmiter.emmit(true);
+				std::this_thread::sleep_for(std::chrono::milliseconds(1000));
+				emmiter.emmit(false);
+				Assert::AreEqual((uint16_t)(1 << i), FactoryIO::internal::BitfieldEnumMapper_t::toBitfield(remover.getDetectedParts()), L"missmatch in element detection / emission");
+				
+				remover.setPartsToRemove(FactoryIO::internal::BitfieldEnumMapper_t::toParts((uint16_t)(1 << i)));
+				std::this_thread::sleep_for(std::chrono::milliseconds(2000));
+				Assert::AreEqual((size_t)0, remover.getDetectedParts().size(), L"Remover didn't remove all parts");
+				remover.setPartsToRemove({});
+			}
+			emmiter.setParts({});
+
+			for (size_t i = 1; i < 3; i++) {
+				emmiter.setBase(FactoryIO::internal::BitfieldEnumMapper_t::toBases((uint16_t)(1 << i)));
+				emmiter.emmit(true);
+				std::this_thread::sleep_for(std::chrono::milliseconds(1000));
+				emmiter.emmit(false);
+				Assert::AreEqual((uint16_t)(1 << i), FactoryIO::internal::BitfieldEnumMapper_t::toBitfield(remover.getDetectedBases()), L"missmatch in element detection / emission");
+
+				remover.setBasesToRemove(FactoryIO::internal::BitfieldEnumMapper_t::toBases((uint16_t)(1 << i)));
+				std::this_thread::sleep_for(std::chrono::milliseconds(2000));
+				Assert::AreEqual((size_t)0, remover.getDetectedBases().size(), L"Remover didn't remove all parts");
+				remover.setBasesToRemove({});
+			}
+			emmiter.setBase({});
+		}
+
 	};
 }

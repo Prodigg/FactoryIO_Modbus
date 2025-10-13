@@ -7,14 +7,14 @@ FactoryIO::remover_t::remover_t(modbus& _mb, modbusAddr_t partsToRemove, modbusA
 	_detectedPartsAddr(detectedParts), 
 	_detectedBasesAddr(detectedBases) { }
 
-void FactoryIO::remover_t::setPartsToRemove(std::vector<FactoryIO::Parts_t> parts) {
+void FactoryIO::remover_t::setPartsToRemove(const std::vector<FactoryIO::Parts_t> parts) {
 	internal::checkModbusAddr(_partsToRemoveAddr);
 	_partsToRemove = internal::BitfieldEnumMapper_t::toBitfield(parts);
 	
 	_mb.modbus_write_register(_partsToRemoveAddr, _partsToRemove);
 }
 
-void FactoryIO::remover_t::setBasesToRemove(std::vector<FactoryIO::Bases_t> bases) {
+void FactoryIO::remover_t::setBasesToRemove(const std::vector<FactoryIO::Bases_t> bases) {
 	internal::checkModbusAddr(_basesToRemoveAddr);
 	_basesToRemove = internal::BitfieldEnumMapper_t::toBitfield(bases);
 
