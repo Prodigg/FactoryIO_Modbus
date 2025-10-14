@@ -31,6 +31,18 @@
     <Filter Include="Quelldateien\Parts\Emmiter/Remover">
       <UniqueIdentifier>{4401c556-2af1-4fe0-99d1-d8008fec2fdf}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Headerdateien\Parts\Convayors">
+      <UniqueIdentifier>{eefa94d2-b892-4cb3-be01-4f1309f9e0f2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Headerdateien\Parts\Convayors\Light Load">
+      <UniqueIdentifier>{86273d3a-7872-4a30-8cb6-138beea7d743}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Headerdateien\Parts\Convayors\Heavy Load">
+      <UniqueIdentifier>{2a2dd7fe-ae5b-49af-8430-addbd3e60891}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Quelldateien\Parts\Convayors">
+      <UniqueIdentifier>{28e19a98-82e7-44be-90a2-9da49e9ddf8e}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="FactoryIO.h">
@@ -54,6 +66,9 @@
     <ClCompile Include="remover.cpp">
       <Filter>Quelldateien\Parts\Emmiter/Remover</Filter>
     </ClCompile>
+    <ClCompile Include="convayor.cpp">
+      <Filter>Quelldateien\Parts\Convayors</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="modbus.h">
@@ -76,6 +91,9 @@
     </ClInclude>
     <ClInclude Include="remover.h">
       <Filter>Headerdateien\Parts\Emmiter/Remover</Filter>
+    </ClInclude>
+    <ClInclude Include="convayor.h">
+      <Filter>Headerdateien\Parts\Convayors</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

@@ -4,7 +4,8 @@
 #pragma once
 #include "modbus.h"
 #include <vector>
-
+#include <type_traits>
+#include <concepts>
 
 namespace FactoryIO {
 	using modbusAddr_t = uint16_t;
@@ -53,6 +54,11 @@ namespace FactoryIO {
 		};
 	}
 
+	template<typename T>
+	T map(T val, T fromLow, T fromHigh, T toLow, T toHigh) requires std::is_integral<T>::value || std::is_floating_point<T>::value {
+		return toLow + ((toHigh - toLow) / (fromHigh - fromLow)) * (val - fromLow);
+	}
+
 	namespace presets {
 		inline const std::vector<FactoryIO::Parts_t> allParts = {
 		Parts_t::NO_PART,
@@ -79,6 +85,4 @@ namespace FactoryIO {
 		Bases_t::STACKABLE_BOX
 		};
 	}
-
-
 }
