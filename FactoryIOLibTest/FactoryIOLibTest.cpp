@@ -577,7 +577,7 @@ namespace _1FactoryIOLibTest_module {
 
 			bool readValue = 0;
 
-			FactoryIO::Convayor_t convayor(mb, 6, 7, 8, 4, FactoryIO::ConvayorMode_t::DIGITAL);
+			FactoryIO::Convayor_t convayor(mb, 6, 7, 8, 4, FactoryIO::ConvayorMode_t::DIGITAL, 0);
 			convayor.move(true);
 			mb.modbus_read_coils(6, 1, &readValue);
 			Assert::IsTrue(readValue, L"convayor didn't start moving.");
@@ -611,7 +611,7 @@ namespace _1FactoryIOLibTest_module {
 
 			bool readValue = 0;
 
-			FactoryIO::Convayor_t convayor(mb, digitalAddr, digitalPlusAddr, digitalMinusAddr, analogAddr, FactoryIO::ConvayorMode_t::DIGITAL_PLUS_MINUS);
+			FactoryIO::Convayor_t convayor(mb, digitalAddr, digitalPlusAddr, digitalMinusAddr, analogAddr, FactoryIO::ConvayorMode_t::DIGITAL_PLUS_MINUS, 0);
 
 			convayor.moveDirection(false);
 			mb.modbus_read_coils(digitalPlusAddr, 1, &readValue);
@@ -639,6 +639,7 @@ namespace _1FactoryIOLibTest_module {
 			constexpr FactoryIO::modbusAddr_t digitalPlusAddr = 7;
 			constexpr FactoryIO::modbusAddr_t digitalMinusAddr = 8;
 			constexpr FactoryIO::modbusAddr_t analogAddr = 4;
+			constexpr uint16_t scaleFactor = 100;
 
 			modbus mb = modbus("127.0.0.1", 502);
 			mb.modbus_set_slave_id(1);
@@ -648,12 +649,12 @@ namespace _1FactoryIOLibTest_module {
 
 			uint16_t readValue = 0;
 
-			FactoryIO::Convayor_t convayor(mb, digitalAddr, digitalPlusAddr, digitalMinusAddr, analogAddr, FactoryIO::ConvayorMode_t::ANALOG);
+			FactoryIO::Convayor_t convayor(mb, digitalAddr, digitalPlusAddr, digitalMinusAddr, analogAddr, FactoryIO::ConvayorMode_t::ANALOG, scaleFactor);
 
 			for (float testValue = -1; testValue < 1; testValue = testValue + 0.1f) {
 				convayor.moveAtSpeed(testValue);
 				mb.modbus_read_holding_registers(analogAddr, 1, &readValue);
-				Assert::AreEqual(static_cast<uint16_t>(FactoryIO::map(testValue, -1.0f, 1.0f, -10.0f, 10.0f)), readValue, L"should speed is not equal to is speed");
+				Assert::AreEqual(static_cast<uint16_t>(FactoryIO::map(testValue, -1.0f, 1.0f, -10.0f, 10.0f) * scaleFactor), readValue, L"should speed is not equal to is speed");
 			}
 
 			convayor.stop();
@@ -662,7 +663,7 @@ namespace _1FactoryIOLibTest_module {
 
 			convayor.move(true);
 			mb.modbus_read_holding_registers(analogAddr, 1, &readValue);
-			Assert::AreEqual((uint16_t)10, readValue, L"convayorbelt didn't start");
+			Assert::AreEqual((uint16_t)1000, readValue, L"convayorbelt didn't start");
 
 			convayor.move(false);
 			mb.modbus_read_holding_registers(analogAddr, 1, &readValue);
@@ -684,18 +685,18 @@ namespace _1FactoryIOLibTest_module {
 			}
 
 			Assert::ExpectException<std::runtime_error, std::function<void(void)>>([&]() {
-				FactoryIO::Convayor_t convayor(mb, FactoryIO::NO_MODBUS_ADDR, FactoryIO::NO_MODBUS_ADDR, FactoryIO::NO_MODBUS_ADDR, FactoryIO::NO_MODBUS_ADDR, FactoryIO::ConvayorMode_t::DIGITAL);
+				FactoryIO::Convayor_t convayor(mb, FactoryIO::NO_MODBUS_ADDR, FactoryIO::NO_MODBUS_ADDR, FactoryIO::NO_MODBUS_ADDR, FactoryIO::NO_MODBUS_ADDR, FactoryIO::ConvayorMode_t::DIGITAL, 0);
 				}, L"convayor constructior doesn't throw error when in digital mode");
 			Assert::ExpectException<std::runtime_error, std::function<void(void)>>([&]() {
-				FactoryIO::Convayor_t convayor(mb, FactoryIO::NO_MODBUS_ADDR, FactoryIO::NO_MODBUS_ADDR, FactoryIO::NO_MODBUS_ADDR, FactoryIO::NO_MODBUS_ADDR, FactoryIO::ConvayorMode_t::DIGITAL_PLUS_MINUS);
+				FactoryIO::Convayor_t convayor(mb, FactoryIO::NO_MODBUS_ADDR, FactoryIO::NO_MODBUS_ADDR, FactoryIO::NO_MODBUS_ADDR, FactoryIO::NO_MODBUS_ADDR, FactoryIO::ConvayorMode_t::DIGITAL_PLUS_MINUS, 0);
 				}, L"convayor constructior doesn't throw error when in digital plus minus mode");
 			Assert::ExpectException<std::runtime_error, std::function<void(void)>>([&]() {
-				FactoryIO::Convayor_t convayor(mb, FactoryIO::NO_MODBUS_ADDR, FactoryIO::NO_MODBUS_ADDR, FactoryIO::NO_MODBUS_ADDR, FactoryIO::NO_MODBUS_ADDR, FactoryIO::ConvayorMode_t::ANALOG);
+				FactoryIO::Convayor_t convayor(mb, FactoryIO::NO_MODBUS_ADDR, FactoryIO::NO_MODBUS_ADDR, FactoryIO::NO_MODBUS_ADDR, FactoryIO::NO_MODBUS_ADDR, FactoryIO::ConvayorMode_t::ANALOG, 0);
 				}, L"convayor constructior doesn't throw error when in analog mode");
 
-			FactoryIO::Convayor_t convayorDigital(mb, digitalAddr, digitalPlusAddr, digitalMinusAddr, analogAddr, FactoryIO::ConvayorMode_t::DIGITAL);
-			FactoryIO::Convayor_t convayorDigitalPlusMinus(mb, digitalAddr, digitalPlusAddr, digitalMinusAddr, analogAddr, FactoryIO::ConvayorMode_t::DIGITAL_PLUS_MINUS);
-			FactoryIO::Convayor_t convayorAnalog(mb, digitalAddr, digitalPlusAddr, digitalMinusAddr, analogAddr, FactoryIO::ConvayorMode_t::ANALOG);
+			FactoryIO::Convayor_t convayorDigital(mb, digitalAddr, digitalPlusAddr, digitalMinusAddr, analogAddr, FactoryIO::ConvayorMode_t::DIGITAL, 0);
+			FactoryIO::Convayor_t convayorDigitalPlusMinus(mb, digitalAddr, digitalPlusAddr, digitalMinusAddr, analogAddr, FactoryIO::ConvayorMode_t::DIGITAL_PLUS_MINUS, 0);
+			FactoryIO::Convayor_t convayorAnalog(mb, digitalAddr, digitalPlusAddr, digitalMinusAddr, analogAddr, FactoryIO::ConvayorMode_t::ANALOG, 0);
 
 			Assert::ExpectException<std::domain_error, std::function<void(void)>>([&]() {
 				convayorDigital.moveDirection(true);
@@ -720,6 +721,83 @@ namespace _1FactoryIOLibTest_module {
 				convayorAnalog.moveDirection(true);
 				}, L"moveDirection doesn't throw error in wrong mode");
 
+		}
+	};
+	TEST_CLASS(Encoder) {
+		TEST_METHOD(forward) {
+			constexpr FactoryIO::modbusAddr_t analogAddr = 4;
+			constexpr FactoryIO::modbusAddr_t signalAAddr = 0;
+			constexpr FactoryIO::modbusAddr_t signalBAddr = 1;
+			constexpr uint16_t scaleFactor = 100;
+
+			modbus mb = modbus("127.0.0.1", 502);
+			mb.modbus_set_slave_id(1);
+			if (!mb.modbus_connect()) {
+				Assert::Fail(L"Couldn't connect to FactoryIO");
+			}
+			FactoryIO::Convayor_t convayor(mb, FactoryIO::NO_MODBUS_ADDR, FactoryIO::NO_MODBUS_ADDR, FactoryIO::NO_MODBUS_ADDR, analogAddr, FactoryIO::ConvayorMode_t::ANALOG, scaleFactor);
+			FactoryIO::encoder_t encoder(mb, signalAAddr, signalBAddr);
+
+			encoder.setRotationCounter(0);
+			encoder.setUpdateCycleTime(std::chrono::milliseconds(10));
+			convayor.moveAtSpeed(0.15f);
+			std::this_thread::sleep_for(std::chrono::seconds(10));
+			convayor.moveAtSpeed(0.0f);
+			Logger::WriteMessage(const_cast<const char*>(std::string("rotations: " + encoder.getRotationCounter()).c_str()));
+			Assert::IsTrue(encoder.isPositionValid(), L"encoder lost position");
+			Assert::IsTrue(0 < encoder.getRotationCounter(), L"convayor didn't move forward");
+			
+			mb.modbus_close();
+		}
+
+		TEST_METHOD(reverse) {
+			constexpr FactoryIO::modbusAddr_t analogAddr = 4;
+			constexpr FactoryIO::modbusAddr_t signalAAddr = 0;
+			constexpr FactoryIO::modbusAddr_t signalBAddr = 1;
+			constexpr uint16_t scaleFactor = 100;
+
+			modbus mb = modbus("127.0.0.1", 502);
+			mb.modbus_set_slave_id(1);
+			if (!mb.modbus_connect()) {
+				Assert::Fail(L"Couldn't connect to FactoryIO");
+			}
+			FactoryIO::Convayor_t convayor(mb, FactoryIO::NO_MODBUS_ADDR, FactoryIO::NO_MODBUS_ADDR, FactoryIO::NO_MODBUS_ADDR, analogAddr, FactoryIO::ConvayorMode_t::ANALOG, scaleFactor);
+			FactoryIO::encoder_t encoder(mb, signalAAddr, signalBAddr);
+
+			encoder.setRotationCounter(0);
+			encoder.setUpdateCycleTime(std::chrono::milliseconds(10));
+			convayor.moveAtSpeed(-0.15f);
+			std::this_thread::sleep_for(std::chrono::seconds(10));
+			convayor.moveAtSpeed(0.0f);
+			Logger::WriteMessage(const_cast<const char*>(std::string("rotations: " + encoder.getRotationCounter()).c_str()));
+			Assert::IsTrue(encoder.isPositionValid(), L"encoder lost position");
+			Assert::IsTrue(0 > encoder.getRotationCounter(), L"convayor didn't move backward");
+
+			mb.modbus_close();
+		}
+
+		TEST_METHOD(excetions) {
+			constexpr FactoryIO::modbusAddr_t signalAAddr = 0;
+			constexpr FactoryIO::modbusAddr_t signalBAddr = 1;
+
+			modbus mb = modbus("127.0.0.1", 502);
+			mb.modbus_set_slave_id(1);
+			if (!mb.modbus_connect()) {
+				Assert::Fail(L"Couldn't connect to FactoryIO");
+			}
+
+			Assert::ExpectException<std::runtime_error, std::function<void(void)>>(
+				[&](void) -> void {
+					FactoryIO::encoder_t encoder(mb, signalAAddr, FactoryIO::NO_MODBUS_ADDR);
+				}, L"no excetion when no modbusAdress is provided in signalA"
+			);
+			Assert::ExpectException<std::runtime_error, std::function<void(void)>>(
+				[&](void) -> void {
+					FactoryIO::encoder_t encoder(mb, FactoryIO::NO_MODBUS_ADDR, signalBAddr);
+				}, L"no excetion when no modbusAdress is provided in signalA"
+			);
+
+			mb.modbus_close();
 		}
 	};
 }

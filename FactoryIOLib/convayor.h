@@ -11,7 +11,7 @@ namespace FactoryIO {
 
 	class Convayor_t {
 	public:
-		Convayor_t(modbus& mb, modbusAddr_t digital, modbusAddr_t digitalPlus, modbusAddr_t digitalMinus, modbusAddr_t analog, ConvayorMode_t mode);
+		Convayor_t(modbus& mb, modbusAddr_t digital, modbusAddr_t digitalPlus, modbusAddr_t digitalMinus, modbusAddr_t analog, ConvayorMode_t mode, uint16_t scaleFactor);
 
 		void move(bool move);
 		void moveDirection(bool reverse);
@@ -26,6 +26,7 @@ namespace FactoryIO {
 		modbusAddr_t _digitalMinusAddr;
 		modbusAddr_t _analogAddr;
 
+		uint16_t _scaleFactor = 0;
 		bool _reverse = false;
 
 		ConvayorMode_t _mode;

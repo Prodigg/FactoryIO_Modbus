@@ -43,6 +43,12 @@
     <Filter Include="Quelldateien\Parts\Convayors">
       <UniqueIdentifier>{28e19a98-82e7-44be-90a2-9da49e9ddf8e}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Headerdateien\Parts\Sensors">
+      <UniqueIdentifier>{4a25ce23-1511-4d46-b98e-73ac7ca4c7c5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Quelldateien\Parts\Sensors">
+      <UniqueIdentifier>{e97d0d92-5010-4667-80c3-e50e1efd0473}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="FactoryIO.h">
@@ -69,6 +75,9 @@
     <ClCompile Include="convayor.cpp">
       <Filter>Quelldateien\Parts\Convayors</Filter>
     </ClCompile>
+    <ClCompile Include="Encoder.cpp">
+      <Filter>Quelldateien\Parts\Sensors</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="modbus.h">
@@ -94,6 +103,9 @@
     </ClInclude>
     <ClInclude Include="convayor.h">
       <Filter>Headerdateien\Parts\Convayors</Filter>
+    </ClInclude>
+    <ClInclude Include="Encoder.h">
+      <Filter>Headerdateien\Parts\Sensors</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

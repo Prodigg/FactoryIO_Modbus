@@ -1,13 +1,14 @@
 #include "convayor.h"
 #include <stdexcept>
 
-FactoryIO::Convayor_t::Convayor_t(modbus& mb, modbusAddr_t digital, modbusAddr_t digitalPlus, modbusAddr_t digitalMinus, modbusAddr_t analog, ConvayorMode_t mode) : 
+FactoryIO::Convayor_t::Convayor_t(modbus& mb, modbusAddr_t digital, modbusAddr_t digitalPlus, modbusAddr_t digitalMinus, modbusAddr_t analog, ConvayorMode_t mode, uint16_t scaleFactor) :
 	mb(mb),
 	_digitalAddr(digital), 
 	_digitalPlusAddr(digitalPlus), 
 	_digitalMinusAddr(digitalMinus), 
 	_analogAddr(analog),
-	_mode(mode) { 
+	_mode(mode) ,
+	_scaleFactor(scaleFactor) { 
 	if (_mode == ConvayorMode_t::DIGITAL && _digitalAddr == NO_MODBUS_ADDR)
 		throw std::runtime_error("unable to generate digital convayor with no digital modbus adress");
 	if (_mode == ConvayorMode_t::DIGITAL_PLUS_MINUS && _digitalPlusAddr == NO_MODBUS_ADDR && _digitalMinusAddr == NO_MODBUS_ADDR)
@@ -58,8 +59,7 @@ void FactoryIO::Convayor_t::moveAtSpeed(float speed) {
 	if (speed < -1 || speed > 1)
 		throw std::out_of_range("speed must be in range 1, -1 (range out of bounds)");
 	
-	mb.modbus_write_register(_analogAddr, static_cast<int16_t>(FactoryIO::map(speed, -1.0f, 1.0f, -10.0f, 10.0f)));
-
+	mb.modbus_write_register(_analogAddr, static_cast<int16_t>(FactoryIO::map(speed, -1.0f, 1.0f, -10.0f, 10.0f) * _scaleFactor));
 }
 
 void FactoryIO::Convayor_t::stop() {

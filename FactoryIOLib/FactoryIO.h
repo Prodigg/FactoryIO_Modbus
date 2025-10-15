@@ -22,3 +22,4 @@
 #include "Emmiter.h"
 #include "remover.h"
 #include "convayor.h"
+#include "Encoder.h"
