@@ -1,4 +1,5 @@
 #include <FactoryIO.h>
+#include <iostream>
 
 int main() {
 	constexpr FactoryIO::modbusAddr_t analogAddr = 4;
@@ -15,9 +16,10 @@ int main() {
 	FactoryIO::encoder_t encoder(mb, signalAAddr, signalBAddr);
 
 	encoder.setRotationCounter(0);
-	encoder.setUpdateCycleTime(std::chrono::milliseconds(0));
-	convayor.moveAtSpeed(0.5f);
-	std::this_thread::sleep_for(std::chrono::seconds(20));
+	encoder.setAllowedMisses(2);
+	encoder.setUpdateCycleTime(std::chrono::milliseconds(1));
+	convayor.moveAtSpeed(1.0f);
+	std::this_thread::sleep_for(std::chrono::seconds(10));
 	convayor.moveAtSpeed(0.0f);
 	
 	mb.modbus_close();
