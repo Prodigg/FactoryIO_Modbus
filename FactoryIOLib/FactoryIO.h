@@ -23,3 +23,4 @@
 #include "remover.h"
 #include "convayor.h"
 #include "Encoder.h"
+#include "rollerStop.h"

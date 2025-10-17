@@ -49,6 +49,9 @@
     <Filter Include="Quelldateien\Parts\Sensors">
       <UniqueIdentifier>{e97d0d92-5010-4667-80c3-e50e1efd0473}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Quelldateien\Parts\Convayors\HeavyLoad">
+      <UniqueIdentifier>{112203d8-3498-4d77-b1af-a4191dad3efe}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="FactoryIO.h">
@@ -78,6 +81,9 @@
     <ClCompile Include="Encoder.cpp">
       <Filter>Quelldateien\Parts\Sensors</Filter>
     </ClCompile>
+    <ClCompile Include="rollerStop.cpp">
+      <Filter>Quelldateien\Parts\Convayors\HeavyLoad</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="modbus.h">
@@ -106,6 +112,9 @@
     </ClInclude>
     <ClInclude Include="Encoder.h">
       <Filter>Headerdateien\Parts\Sensors</Filter>
+    </ClInclude>
+    <ClInclude Include="rollerStop.h">
+      <Filter>Headerdateien\Parts\Convayors\Heavy Load</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

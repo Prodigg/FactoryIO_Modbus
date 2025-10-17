@@ -765,7 +765,7 @@ namespace _1FactoryIOLibTest_module {
 			FactoryIO::encoder_t encoder(mb, signalAAddr, signalBAddr);
 
 			encoder.setRotationCounter(0);
-			encoder.setUpdateCycleTime(std::chrono::milliseconds(10));
+			encoder.setUpdateCycleTime(std::chrono::milliseconds(2));
 			convayor.moveAtSpeed(-0.15f);
 			std::this_thread::sleep_for(std::chrono::seconds(10));
 			convayor.moveAtSpeed(0.0f);
@@ -825,6 +825,53 @@ namespace _1FactoryIOLibTest_module {
 			Logger::WriteMessage(const_cast<const char*>(std::string("rotations: " + encoder.getRotationCounter()).c_str()));
 			Assert::IsTrue(encoder.isPositionValid(), L"encoder lost position");
 			Assert::IsTrue(0 < encoder.getRotationCounter(), L"convayor didn't move forward");
+
+			mb.modbus_close();
+		}
+	};
+
+	TEST_CLASS(rollerStop) {
+		TEST_METHOD(setRollerStop) {
+			constexpr FactoryIO::modbusAddr_t rollerStopAddr = 9;
+
+			modbus mb = modbus("127.0.0.1", 502);
+			mb.modbus_set_slave_id(1);
+			if (!mb.modbus_connect()) {
+				Assert::Fail(L"Couldn't connect to FactoryIO");
+			}
+
+			bool modbusReadValue = false;
+
+
+			FactoryIO::rollerStop_t rollerStop(mb, rollerStopAddr);
+
+			rollerStop.setRollerState(true);
+			mb.modbus_read_coils(rollerStopAddr, 1, &modbusReadValue);
+			Assert::IsTrue(modbusReadValue, L"roller isn't active");
+
+			rollerStop.setRollerState(false);
+			mb.modbus_read_coils(rollerStopAddr, 1, &modbusReadValue);
+			Assert::IsFalse(modbusReadValue, L"roller isn't deactivated");
+
+			mb.modbus_close();
+		}
+
+		TEST_METHOD(exceptions) {
+			constexpr FactoryIO::modbusAddr_t rollerStopAddr = 9;
+
+			modbus mb = modbus("127.0.0.1", 502);
+			mb.modbus_set_slave_id(1);
+			if (!mb.modbus_connect()) {
+				Assert::Fail(L"Couldn't connect to FactoryIO");
+			}
+
+			FactoryIO::rollerStop_t rollerStop(mb, FactoryIO::NO_MODBUS_ADDR);
+
+			Assert::ExpectException<std::runtime_error, std::function<void(void)>>(
+				[&](void) -> void {
+					rollerStop.setRollerState(true);
+				}, L"no excetion when no modbusAdress is provided"
+			);
 
 			mb.modbus_close();
 		}
