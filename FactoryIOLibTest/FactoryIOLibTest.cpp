@@ -876,6 +876,93 @@ namespace _1FactoryIOLibTest_module {
 			mb.modbus_close();
 		}
 	};
+
+	TEST_CLASS(chainTransfer) {
+		TEST_METHOD(move) {
+			constexpr FactoryIO::modbusAddr_t ChainTransferPlus = 10;
+			constexpr FactoryIO::modbusAddr_t ChainTransferMinus = 11;
+			constexpr FactoryIO::modbusAddr_t ChainTransferLeft = 12;
+			constexpr FactoryIO::modbusAddr_t ChainTransferRight = 13;
+
+			modbus mb = modbus("127.0.0.1", 502);
+			mb.modbus_set_slave_id(1);
+			if (!mb.modbus_connect()) {
+				Assert::Fail(L"Couldn't connect to FactoryIO");
+			}
+
+			bool modbusReadValue = false;
+
+			FactoryIO::chainTransfer_t chainTransfer(mb, ChainTransferPlus, ChainTransferMinus, ChainTransferLeft, ChainTransferRight);
+
+			chainTransfer.moveForward();
+			mb.modbus_read_coils(ChainTransferPlus, 1, &modbusReadValue);
+			Assert::IsTrue(modbusReadValue, L"not moving forward");
+
+			chainTransfer.moveBackward();
+			mb.modbus_read_coils(ChainTransferMinus, 1, &modbusReadValue);
+			Assert::IsTrue(modbusReadValue, L"not moving backward");
+
+			chainTransfer.moveLeft();
+			mb.modbus_read_coils(ChainTransferLeft, 1, &modbusReadValue);
+			Assert::IsTrue(modbusReadValue, L"not moving left");
+
+			chainTransfer.moveRight();
+			mb.modbus_read_coils(ChainTransferRight, 1, &modbusReadValue);
+			Assert::IsTrue(modbusReadValue, L"not moving right");
+
+			chainTransfer.stop();
+			mb.modbus_read_coils(ChainTransferPlus, 1, &modbusReadValue);
+			Assert::IsFalse(modbusReadValue, L"not stopped");
+			mb.modbus_read_coils(ChainTransferMinus, 1, &modbusReadValue);
+			Assert::IsFalse(modbusReadValue, L"not stopped");
+			mb.modbus_read_coils(ChainTransferLeft, 1, &modbusReadValue);
+			Assert::IsFalse(modbusReadValue, L"not stopped");
+			mb.modbus_read_coils(ChainTransferRight, 1, &modbusReadValue);
+			Assert::IsFalse(modbusReadValue, L"not stopped");
+
+			mb.modbus_close();
+		}
+
+		TEST_METHOD(exceptions) {
+			constexpr FactoryIO::modbusAddr_t ChainTransferPlus = 10;
+			constexpr FactoryIO::modbusAddr_t ChainTransferMinus = 11;
+			constexpr FactoryIO::modbusAddr_t ChainTransferLeft = 12;
+			constexpr FactoryIO::modbusAddr_t ChainTransferRight = 13;
+
+			modbus mb = modbus("127.0.0.1", 502);
+			mb.modbus_set_slave_id(1);
+			if (!mb.modbus_connect()) {
+				Assert::Fail(L"Couldn't connect to FactoryIO");
+			}
+
+
+			FactoryIO::chainTransfer_t chainTransfer(mb, FactoryIO::NO_MODBUS_ADDR , FactoryIO::NO_MODBUS_ADDR, FactoryIO::NO_MODBUS_ADDR, FactoryIO::NO_MODBUS_ADDR);
+
+			Assert::ExpectException<std::runtime_error, std::function<void(void)>>(
+				[&](void) -> void {
+					chainTransfer.moveForward();
+				}, L"no excetion when no modbusAdress is provided"
+			);
+			Assert::ExpectException<std::runtime_error, std::function<void(void)>>(
+				[&](void) -> void {
+					chainTransfer.moveBackward();
+				}, L"no excetion when no modbusAdress is provided"
+			);
+			Assert::ExpectException<std::runtime_error, std::function<void(void)>>(
+				[&](void) -> void {
+					chainTransfer.moveLeft();
+				}, L"no excetion when no modbusAdress is provided"
+			);
+			Assert::ExpectException<std::runtime_error, std::function<void(void)>>(
+				[&](void) -> void {
+					chainTransfer.moveRight();
+				}, L"no excetion when no modbusAdress is provided"
+			);
+
+			chainTransfer.stop();
+			mb.modbus_close();
+		}
+	};
 }
 
 

@@ -1,5 +1,6 @@
 #include "convayor.h"
 #include <stdexcept>
+#include "chainTransfer.h"
 
 FactoryIO::Convayor_t::Convayor_t(modbus& mb, modbusAddr_t digital, modbusAddr_t digitalPlus, modbusAddr_t digitalMinus, modbusAddr_t analog, ConvayorMode_t mode, uint16_t scaleFactor) :
 	mb(mb),
