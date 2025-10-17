@@ -10,7 +10,7 @@ FactoryIO::encoder_t::encoder_t(modbus& _mb, modbusAddr_t signalA, modbusAddr_t 
 	_signalBAddr(signalB),
 	_mb(_mb),
 	_privateModbus(_mb) {
-	_threadWait.store(startThreadImmidiantly);
+	_threadWait.store(!startThreadImmidiantly);
 	FactoryIO::internal::checkModbusAddr(signalA);
 	FactoryIO::internal::checkModbusAddr(signalB);
 
@@ -74,7 +74,7 @@ void FactoryIO::encoder_t::_updateSignal() {
 				std::this_thread::sleep_for(std::chrono::milliseconds(250));
 			}
 
-			while (_threadWait.load()) {
+			while (_threadWait.load() && _treadRun.load()) {
 				// wait for thread to be resumed
 				std::this_thread::sleep_for(std::chrono::milliseconds(100));
 			}

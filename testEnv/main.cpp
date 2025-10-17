@@ -16,7 +16,7 @@ int main() {
 	FactoryIO::encoder_t encoder(mb, signalAAddr, signalBAddr);
 
 	encoder.setRotationCounter(0);
-	encoder.setAllowedMisses(2);
+	encoder.setAllowedMisses(10);
 	encoder.setUpdateCycleTime(std::chrono::milliseconds(1));
 	convayor.moveAtSpeed(1.0f);
 	std::this_thread::sleep_for(std::chrono::seconds(10));
