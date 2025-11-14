@@ -87,6 +87,9 @@
     <ClCompile Include="chainTransfer.cpp">
       <Filter>Quelldateien\Parts\Convayors\HeavyLoad</Filter>
     </ClCompile>
+    <ClCompile Include="turntable.cpp">
+      <Filter>Quelldateien\Parts\Convayors\HeavyLoad</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="modbus.h">
@@ -120,6 +123,9 @@
       <Filter>Headerdateien\Parts\Convayors\Heavy Load</Filter>
     </ClInclude>
     <ClInclude Include="chainTransfer.h">
+      <Filter>Headerdateien\Parts\Convayors\Heavy Load</Filter>
+    </ClInclude>
+    <ClInclude Include="turntable.h">
       <Filter>Headerdateien\Parts\Convayors\Heavy Load</Filter>
     </ClInclude>
   </ItemGroup>

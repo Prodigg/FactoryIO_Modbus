@@ -141,6 +141,7 @@
     <ClCompile Include="remover.cpp" />
     <ClCompile Include="rollerStop.cpp" />
     <ClCompile Include="StackLight.cpp" />
+    <ClCompile Include="turntable.cpp" />
     <ClCompile Include="WarningLight.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -154,6 +155,7 @@
     <ClInclude Include="remover.h" />
     <ClInclude Include="rollerStop.h" />
     <ClInclude Include="StackLight.h" />
+    <ClInclude Include="turntable.h" />
     <ClInclude Include="WarningLight.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
