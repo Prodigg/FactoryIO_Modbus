@@ -135,6 +135,7 @@
     <ClCompile Include="chainTransfer.cpp" />
     <ClCompile Include="convayor.cpp" />
     <ClCompile Include="convayorGate.cpp" />
+    <ClCompile Include="convayorScale.cpp" />
     <ClCompile Include="Emmiter.cpp" />
     <ClCompile Include="Encoder.cpp" />
     <ClCompile Include="FactoryIO.h" />
@@ -150,6 +151,7 @@
     <ClInclude Include="chainTransfer.h" />
     <ClInclude Include="convayor.h" />
     <ClInclude Include="convayorGate.h" />
+    <ClInclude Include="convayorScale.h" />
     <ClInclude Include="Emmiter.h" />
     <ClInclude Include="Encoder.h" />
     <ClInclude Include="FactoryIOGeneral.h" />

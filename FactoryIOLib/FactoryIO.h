@@ -27,3 +27,4 @@
 #include "chainTransfer.h"
 #include "turntable.h"
 #include "convayorGate.h"
+#include "convayorScale.h"

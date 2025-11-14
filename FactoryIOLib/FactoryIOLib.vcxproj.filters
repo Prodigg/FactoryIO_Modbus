@@ -96,6 +96,9 @@
     <ClCompile Include="convayorGate.cpp">
       <Filter>Quelldateien\Parts\Convayors\LightLoad</Filter>
     </ClCompile>
+    <ClCompile Include="convayorScale.cpp">
+      <Filter>Quelldateien\Parts\Convayors\LightLoad</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="modbus.h">
@@ -135,6 +138,9 @@
       <Filter>Headerdateien\Parts\Convayors\Heavy Load</Filter>
     </ClInclude>
     <ClInclude Include="convayorGate.h">
+      <Filter>Headerdateien\Parts\Convayors\Light Load</Filter>
+    </ClInclude>
+    <ClInclude Include="convayorScale.h">
       <Filter>Headerdateien\Parts\Convayors\Light Load</Filter>
     </ClInclude>
   </ItemGroup>

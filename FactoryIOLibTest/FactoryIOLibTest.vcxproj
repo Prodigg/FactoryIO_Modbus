@@ -166,6 +166,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="conayorGateTest.cpp" />
+    <ClCompile Include="convayorScaleTest.cpp" />
     <ClCompile Include="FactoryIOLibTest.cpp" />
     <ClCompile Include="FactoryIOLibTurntableTest.cpp" />
     <ClCompile Include="pch.cpp">
