@@ -1,5 +1,49 @@
 #include "turntable.h"
 #include <iostream>
+#include <stdexcept>
+
+FactoryIO::turntable_t::turntable_t(
+	modbus& mb,
+	modbusAddr_t rollPlus,
+	modbusAddr_t rollMinus,
+	modbusAddr_t frontLimit,
+	modbusAddr_t backLimit,
+	modbusAddr_t limit0,
+	modbusAddr_t limit90,
+	turntableMode_t mode,
+	modbusAddr_t turn,
+	modbusAddr_t turnPlus,
+	modbusAddr_t turnMinus) :
+	_mb(mb),
+	_rollPlusIndex(rollPlus), 
+	_rollMinusIndex(rollMinus),
+	_frontLimitIndex(frontLimit),
+	_backLimitIndex(backLimit),
+	_limit0Index(limit0),
+	_limit90Index(limit90),
+	_mode(mode),
+	_turnIndex(turn),
+	_turnPlusIndex(turnPlus),
+	_turnMinusIndex(turnMinus) {
+	FactoryIO::internal::checkModbusAddr(rollPlus, "modbusAdress rollPlus is required to use turntable");
+	FactoryIO::internal::checkModbusAddr(rollMinus, "modbusAdress rollMinus is required to use turntable");
+	FactoryIO::internal::checkModbusAddr(frontLimit, "modbusAdress frontLimit is required to use turntable");
+	FactoryIO::internal::checkModbusAddr(backLimit, "modbusAdress backLimit is required to use turntable");
+	FactoryIO::internal::checkModbusAddr(limit0, "modbusAdress limit0 is required to use turntable");
+	FactoryIO::internal::checkModbusAddr(limit90, "modbusAdress limit90 is required to use turntable");
+
+	if (mode == turntableMode_t::MONOSTABLE) {
+		if (turn == FactoryIO::NO_MODBUS_ADDR)
+			throw std::domain_error("Unable to activate mode MONOSTABLE when no turn address is provided");
+	}
+
+	if (mode == turntableMode_t::BISTABLE) {
+		if (turnPlus == FactoryIO::NO_MODBUS_ADDR)
+			throw std::domain_error("Unable to activate mode BISTABLE when no turnPlus address is provided");
+		if (turnMinus == FactoryIO::NO_MODBUS_ADDR)
+			throw std::domain_error("Unable to activate mode BISTABLE when no turnMinus address is provided");
+	}
+}
 
 void FactoryIO::turntable_t::update() {
 	switch (_state) {
@@ -83,6 +127,7 @@ bool FactoryIO::turntable_t::turnTurntable(bool turn) {
 			_mb.modbus_write_coil(_turnMinusIndex, !turn);
 		}
 	}
+	return false;
 }
 
 bool FactoryIO::turntable_t::shouldRotate(direction_t direction) {

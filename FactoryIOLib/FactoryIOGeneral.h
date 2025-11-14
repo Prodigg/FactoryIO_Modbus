@@ -37,7 +37,7 @@ namespace FactoryIO {
 	};
 
 	namespace internal {
-		void checkModbusAddr(modbusAddr_t addr);
+		void checkModbusAddr(modbusAddr_t addr, std::string message = "feature disabled due to providing no modbus address.");
 
 		/*!
 		 * @brief converts standardised enums into bitfields

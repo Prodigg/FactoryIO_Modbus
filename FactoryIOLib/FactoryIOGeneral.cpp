@@ -1,9 +1,9 @@
 #include "FactoryIOGeneral.h"
 #include <stdexcept>
 
-void FactoryIO::internal::checkModbusAddr(modbusAddr_t addr) {
+void FactoryIO::internal::checkModbusAddr(modbusAddr_t addr, std::string message) {
 	if (addr == NO_MODBUS_ADDR) {
-		throw std::runtime_error("feature disabled due to providing no modbus address.");
+		throw std::runtime_error(message);
 	}
 }
 

@@ -20,15 +20,15 @@ namespace FactoryIO {
 			modbusAddr_t turnPlus,
 			modbusAddr_t turnMinus);
 
-		turntable_t& pickupLeft();
-		turntable_t& pickupRight();
-		turntable_t& pickupFront();
-		turntable_t& pickupBack();
+		turntable_t& pickupLeft() { _pickupPos = direction_t::LEFT; return *this; };
+		turntable_t& pickupRight() { _pickupPos = direction_t::RIGHT; return *this; };
+		turntable_t& pickupFront() { _pickupPos = direction_t::FRONT; return *this; };
+		turntable_t& pickupBack() { _pickupPos = direction_t::BACK; return *this; };
 
-		void transferLeft();
-		void transferRight();
-		void transferFront();
-		void transferBack();
+		void transferLeft() { _transferPos = direction_t::LEFT; };
+		void transferRight() { _transferPos = direction_t::RIGHT; };
+		void transferFront() { _transferPos = direction_t::FRONT; };
+		void transferBack() { _transferPos = direction_t::BACK; };
 
 		void update();
 	private:
