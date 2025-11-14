@@ -115,7 +115,7 @@ std::vector<FactoryIO::Parts_t> FactoryIO::internal::BitfieldEnumMapper_t::toPar
 		returnParts.push_back(FactoryIO::Parts_t::METTAL_PRODUCT_LID);
 	if ((bitfield >> 13 & 0x0001) == true)
 		returnParts.push_back(FactoryIO::Parts_t::STACKABLE_BOX);
-	if ((bitfield >> 14 & 0xFFFF) == true) // defualt case
+	if ((bitfield >> 14 & 0xFFFF)) // defualt case
 		throw std::runtime_error("bitfield has values that cant be decodet.");
 
 	returnParts.shrink_to_fit();
@@ -132,9 +132,22 @@ std::vector<FactoryIO::Bases_t> FactoryIO::internal::BitfieldEnumMapper_t::toBas
 		returnBases.push_back(FactoryIO::Bases_t::SQARE_PALLET);
 	if ((bitfield >> 2 & 0x0001) == true)
 		returnBases.push_back(FactoryIO::Bases_t::STACKABLE_BOX);
-	if ((bitfield >> 3 & 0xFFFF) == true) // defualt case
+	if ((bitfield >> 3 & 0xFFFF) ) // defualt case
 		throw std::runtime_error("bitfield has values that cant be decodet.");
 
 	returnBases.shrink_to_fit();
 	return returnBases;
 }
+
+bool FactoryIO::internal::testing::getModbusCoilState(FactoryIO::modbusAddr_t addr, modbus& mb) {
+	bool tmp = false;
+	mb.modbus_read_coils(addr, 1, &tmp);
+	return tmp;
+}
+
+uint16_t FactoryIO::internal::testing::getModbusRegState(FactoryIO::modbusAddr_t addr, modbus& mb) {
+	uint16_t tmp = 0;
+	mb.modbus_read_holding_registers(addr, 1, &tmp);
+	return tmp;
+}
+

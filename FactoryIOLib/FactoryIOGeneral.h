@@ -52,6 +52,12 @@ namespace FactoryIO {
 		private:
 
 		};
+		namespace testing {
+			bool getModbusCoilState(FactoryIO::modbusAddr_t addr, modbus& mb);
+
+			uint16_t getModbusRegState(FactoryIO::modbusAddr_t addr, modbus& mb);
+		}
+
 	}
 
 	template<typename T>

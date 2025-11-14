@@ -7,17 +7,7 @@
 
 using namespace Microsoft::VisualStudio::CppUnitTestFramework;
 
-bool getModbusCoilState(FactoryIO::modbusAddr_t addr, modbus& mb) {
-	bool tmp = false;
-	mb.modbus_read_coils(addr, 1, &tmp);
-	return tmp;
-}
-
-uint16_t getModbusRegState(FactoryIO::modbusAddr_t addr, modbus& mb) {
-	uint16_t tmp = 0;
-	mb.modbus_read_holding_registers(addr, 1, &tmp);
-	return tmp;
-}
+using namespace FactoryIO::internal::testing;
 
 namespace _1FactoryIOLibTest_module {
 	TEST_CLASS(alarmSirene) {

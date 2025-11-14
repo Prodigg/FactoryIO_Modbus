@@ -25,3 +25,4 @@
 #include "Encoder.h"
 #include "rollerStop.h"
 #include "chainTransfer.h"
+#include "turntable.h"
