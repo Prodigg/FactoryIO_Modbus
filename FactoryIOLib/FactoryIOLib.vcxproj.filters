@@ -52,6 +52,9 @@
     <Filter Include="Quelldateien\Parts\Convayors\HeavyLoad">
       <UniqueIdentifier>{112203d8-3498-4d77-b1af-a4191dad3efe}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Quelldateien\Parts\Convayors\LightLoad">
+      <UniqueIdentifier>{4f9ed782-cca7-4b6e-a1d7-82a77688726d}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="FactoryIO.h">
@@ -90,6 +93,9 @@
     <ClCompile Include="turntable.cpp">
       <Filter>Quelldateien\Parts\Convayors\HeavyLoad</Filter>
     </ClCompile>
+    <ClCompile Include="convayorGate.cpp">
+      <Filter>Quelldateien\Parts\Convayors\LightLoad</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="modbus.h">
@@ -127,6 +133,9 @@
     </ClInclude>
     <ClInclude Include="turntable.h">
       <Filter>Headerdateien\Parts\Convayors\Heavy Load</Filter>
+    </ClInclude>
+    <ClInclude Include="convayorGate.h">
+      <Filter>Headerdateien\Parts\Convayors\Light Load</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

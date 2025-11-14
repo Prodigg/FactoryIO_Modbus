@@ -18,9 +18,9 @@ namespace FactoryIO {
 		void moveAtSpeed(float speed);
 		void stop();
 
-	private:
+	protected:
 		modbus& mb;
-
+	private:
 		modbusAddr_t _digitalAddr;
 		modbusAddr_t _digitalPlusAddr;
 		modbusAddr_t _digitalMinusAddr;

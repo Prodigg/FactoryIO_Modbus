@@ -26,3 +26,4 @@
 #include "rollerStop.h"
 #include "chainTransfer.h"
 #include "turntable.h"
+#include "convayorGate.h"
