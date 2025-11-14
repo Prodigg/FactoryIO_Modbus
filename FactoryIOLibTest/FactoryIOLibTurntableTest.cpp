@@ -41,7 +41,7 @@ namespace _1FactoryIOLibTest_module {
 				turntableTurnMinus
 			);
 			// TODO: develop test with emmiter and convayor to test turntable
-
+			Assert::Fail(L"Develop tests here");
 			mb.modbus_close();
 		}
 		TEST_METHOD(bistable) {
@@ -75,7 +75,7 @@ namespace _1FactoryIOLibTest_module {
 				turntableTurnMinus
 			);
 			// TODO: develop test with emmiter and convayor to test turntable
-
+			Assert::Fail(L"Develop tests here");
 			mb.modbus_close();
 		}
 		TEST_METHOD(exceptions) {
