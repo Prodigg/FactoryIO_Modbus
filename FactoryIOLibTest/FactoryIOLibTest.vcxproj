@@ -177,6 +177,7 @@
     </ClCompile>
     <ClCompile Include="pivotArmSorterTest.cpp" />
     <ClCompile Include="pusherTest.cpp" />
+    <ClCompile Include="stopBladeTest.cpp" />
     <ClCompile Include="weelSorterTest.cpp" />
   </ItemGroup>
   <ItemGroup>

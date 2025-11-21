@@ -31,3 +31,4 @@
 #include "pivotArmSorter.h"
 #include "weelSorter.h"
 #include "pusher.h"
+#include "stopBlade.h"
