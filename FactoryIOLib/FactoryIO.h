@@ -29,3 +29,4 @@
 #include "convayorGate.h"
 #include "convayorScale.h"
 #include "pivotArmSorter.h"
+#include "weelSorter.h"

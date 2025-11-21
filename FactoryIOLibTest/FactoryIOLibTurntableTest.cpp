@@ -26,7 +26,7 @@ namespace _1FactoryIOLibTest_module {
 			if (!mb.modbus_connect()) {
 				Assert::Fail(L"Couldn't connect to FactoryIO");
 			}
-
+			
 			FactoryIO::turntable_t turntable(
 				mb,
 				turntableRollPlus,

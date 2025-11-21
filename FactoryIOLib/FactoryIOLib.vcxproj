@@ -146,6 +146,7 @@
     <ClCompile Include="StackLight.cpp" />
     <ClCompile Include="turntable.cpp" />
     <ClCompile Include="WarningLight.cpp" />
+    <ClCompile Include="weelSorter.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="alarmSiren.h" />
@@ -163,6 +164,7 @@
     <ClInclude Include="StackLight.h" />
     <ClInclude Include="turntable.h" />
     <ClInclude Include="WarningLight.h" />
+    <ClInclude Include="weelSorter.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
