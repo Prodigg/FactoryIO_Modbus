@@ -33,3 +33,5 @@
 #include "pusher.h"
 #include "stopBlade.h"
 #include "positioningBar.h"
+#include "digitalSensor.h"
+#include "analogSensor.h"

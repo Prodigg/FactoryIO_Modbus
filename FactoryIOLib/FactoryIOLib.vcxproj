@@ -153,10 +153,12 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="alarmSiren.h" />
+    <ClInclude Include="analogSensor.h" />
     <ClInclude Include="chainTransfer.h" />
     <ClInclude Include="convayor.h" />
     <ClInclude Include="convayorGate.h" />
     <ClInclude Include="convayorScale.h" />
+    <ClInclude Include="digitalSensor.h" />
     <ClInclude Include="Emmiter.h" />
     <ClInclude Include="Encoder.h" />
     <ClInclude Include="FactoryIOGeneral.h" />

@@ -173,5 +173,11 @@
     <ClInclude Include="positioningBar.h">
       <Filter>Headerdateien\Parts\Convayors\Light Load</Filter>
     </ClInclude>
+    <ClInclude Include="digitalSensor.h">
+      <Filter>Headerdateien\Parts\Sensors</Filter>
+    </ClInclude>
+    <ClInclude Include="analogSensor.h">
+      <Filter>Headerdateien\Parts\Sensors</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>
