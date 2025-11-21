@@ -46,9 +46,11 @@ namespace FactoryIO {
 		public:
 			static uint16_t toBitfield(std::vector<Parts_t> _enum);
 			static uint16_t toBitfield(std::vector<Bases_t> _enum);
+			static uint16_t toBitfield(std::vector<bool> _boolArray);
 
 			static std::vector<Parts_t> toParts(uint16_t bitfield);
 			static std::vector<Bases_t> toBases(uint16_t bitfield);
+			static std::vector<bool> toBool(uint16_t bitfield, size_t maxRelevantBit = 16);
 		private:
 
 		};

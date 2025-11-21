@@ -84,6 +84,16 @@ uint16_t FactoryIO::internal::BitfieldEnumMapper_t::toBitfield(std::vector<Facto
 	return _base;
 }
 
+uint16_t FactoryIO::internal::BitfieldEnumMapper_t::toBitfield(std::vector<bool> _boolArray) {
+	if (_boolArray.size() > 16)
+		throw std::out_of_range("Array can't be larger than 16");
+	uint16_t bitfield = 0;
+	for (size_t i = 0; i < _boolArray.size(); i++) {
+		bitfield |= _boolArray.at(i) << i;
+	}
+	return bitfield;
+}
+
 std::vector<FactoryIO::Parts_t> FactoryIO::internal::BitfieldEnumMapper_t::toParts(uint16_t bitfield) {
 	std::vector<FactoryIO::Parts_t> returnParts{};
 	returnParts.reserve(16);
@@ -137,6 +147,14 @@ std::vector<FactoryIO::Bases_t> FactoryIO::internal::BitfieldEnumMapper_t::toBas
 
 	returnBases.shrink_to_fit();
 	return returnBases;
+}
+
+std::vector<bool> FactoryIO::internal::BitfieldEnumMapper_t::toBool(uint16_t bitfield, size_t maxRelevantBit) {
+	std::vector<bool> bitfieldArray;
+	for (size_t i = 0; i < maxRelevantBit; i++) {
+		bitfieldArray.push_back(bitfield >> i & 0x0001);
+	}
+	return bitfieldArray;
 }
 
 bool FactoryIO::internal::testing::getModbusCoilState(FactoryIO::modbusAddr_t addr, modbus& mb) {
