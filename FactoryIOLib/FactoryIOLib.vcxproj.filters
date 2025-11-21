@@ -105,6 +105,9 @@
     <ClCompile Include="weelSorter.cpp">
       <Filter>Quelldateien\Parts\Convayors\LightLoad</Filter>
     </ClCompile>
+    <ClCompile Include="pusher.cpp">
+      <Filter>Quelldateien\Parts\Convayors\LightLoad</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="modbus.h">
@@ -153,6 +156,9 @@
       <Filter>Headerdateien\Parts\Convayors\Light Load</Filter>
     </ClInclude>
     <ClInclude Include="weelSorter.h">
+      <Filter>Headerdateien\Parts\Convayors\Light Load</Filter>
+    </ClInclude>
+    <ClInclude Include="pusher.h">
       <Filter>Headerdateien\Parts\Convayors\Light Load</Filter>
     </ClInclude>
   </ItemGroup>
