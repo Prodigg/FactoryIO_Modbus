@@ -28,3 +28,4 @@
 #include "turntable.h"
 #include "convayorGate.h"
 #include "convayorScale.h"
+#include "pivotArmSorter.h"
