@@ -176,6 +176,7 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="pivotArmSorterTest.cpp" />
+    <ClCompile Include="positioningBarTest.cpp" />
     <ClCompile Include="pusherTest.cpp" />
     <ClCompile Include="stopBladeTest.cpp" />
     <ClCompile Include="weelSorterTest.cpp" />

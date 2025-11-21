@@ -32,3 +32,4 @@
 #include "weelSorter.h"
 #include "pusher.h"
 #include "stopBlade.h"
+#include "positioningBar.h"

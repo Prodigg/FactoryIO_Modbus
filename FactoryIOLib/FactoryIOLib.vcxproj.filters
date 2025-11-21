@@ -111,6 +111,9 @@
     <ClCompile Include="stopBlade.cpp">
       <Filter>Quelldateien\Parts\Convayors\LightLoad</Filter>
     </ClCompile>
+    <ClCompile Include="positioningBar.cpp">
+      <Filter>Quelldateien\Parts\Convayors\LightLoad</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="modbus.h">
@@ -165,6 +168,9 @@
       <Filter>Headerdateien\Parts\Convayors\Light Load</Filter>
     </ClInclude>
     <ClInclude Include="stopBlade.h">
+      <Filter>Headerdateien\Parts\Convayors\Light Load</Filter>
+    </ClInclude>
+    <ClInclude Include="positioningBar.h">
       <Filter>Headerdateien\Parts\Convayors\Light Load</Filter>
     </ClInclude>
   </ItemGroup>
