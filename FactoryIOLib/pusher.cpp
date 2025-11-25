@@ -84,7 +84,7 @@ bool FactoryIO::pusher_t::isAtFront() {
 	case FactoryIO::pusherMode_t::ANALOG:
 		internal::checkModbusAddr(_pusherPositionAddr);
 		_mb.modbus_read_input_registers(_pusherPositionAddr, 1, &position);
-		return position <= _acceptableOffDistance * _scaleFactor;
+		return position >= _scaleFactor * 10 - _acceptableOffDistance * _scaleFactor;
 
 	case FactoryIO::pusherMode_t::DIGITAL_ANALOG:
 		internal::checkModbusAddr(_frontLimitAddr);
@@ -113,7 +113,7 @@ bool FactoryIO::pusher_t::isAtBack() {
 	case FactoryIO::pusherMode_t::ANALOG:
 		internal::checkModbusAddr(_pusherPositionAddr);
 		_mb.modbus_read_input_registers(_pusherPositionAddr, 1, &position);
-		return position >= _scaleFactor * 10 - _acceptableOffDistance * _scaleFactor;
+		return position <= _acceptableOffDistance * _scaleFactor;
 
 	case FactoryIO::pusherMode_t::DIGITAL_ANALOG:
 		internal::checkModbusAddr(_backLimitAddr);
