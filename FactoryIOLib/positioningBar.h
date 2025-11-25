@@ -10,7 +10,7 @@ namespace FactoryIO {
 		void raise();
 		void lower();
 
-		bool isRaised();
+		bool limitVerticalReached();
 		bool isClamped();
 	private:
 		modbusAddr_t _clampAddr;

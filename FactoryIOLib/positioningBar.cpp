@@ -28,10 +28,10 @@ void FactoryIO::positioningBar_t::raise() {
 
 void FactoryIO::positioningBar_t::lower() {
 	internal::checkModbusAddr(_raiseAddr);
-	_mb.modbus_write_coil(_raiseAddr, true);
+	_mb.modbus_write_coil(_raiseAddr, false);
 }
 
-bool FactoryIO::positioningBar_t::isRaised() {
+bool FactoryIO::positioningBar_t::limitVerticalReached() {
 	internal::checkModbusAddr(_verticalLimitAddr);
 	bool isRaised = false;
 	_mb.modbus_read_input_bits(_verticalLimitAddr, 1, &isRaised);
