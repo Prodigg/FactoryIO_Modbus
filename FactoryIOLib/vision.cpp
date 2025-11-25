@@ -49,7 +49,7 @@ FactoryIO::vision_t FactoryIO::vision_t::constructDetectLid(modbus& mb, modbusAd
 	);
 }
 
-vision_t FactoryIO::vision_t::constructDetectRaw(modbus& mb, modbusAddr_t singleDetectionAddr) {
+FactoryIO::vision_t FactoryIO::vision_t::constructDetectRaw(modbus& mb, modbusAddr_t singleDetectionAddr) {
 	return vision_t(
 		mb,
 		visionMode_t::DETECT_RAW,
@@ -144,6 +144,21 @@ bool FactoryIO::vision_t::isPartPresent() {
 	return false;
 }
 
+bool FactoryIO::vision_t::isLidPresent() {
+	Parts_t detectedPart = getDetectedPart();
+	return detectedPart == Parts_t::BLUE_PRODUCT_LID || detectedPart == Parts_t::GREEN_PRODUCT_LID || detectedPart == Parts_t::METTAL_PRODUCT_LID;
+}
+
+bool FactoryIO::vision_t::isBasePresent() {
+	Parts_t detectedPart = getDetectedPart();
+	return detectedPart == Parts_t::BLUE_PRODUCT_BASE || detectedPart == Parts_t::GREEN_PRODUCT_BASE || detectedPart == Parts_t::METTAL_PRODUCT_BASE;
+}
+
+bool FactoryIO::vision_t::isRawPresent() {
+	Parts_t detectedPart = getDetectedPart();
+	return detectedPart == Parts_t::BLUE_PRODUCT_BASE || detectedPart == Parts_t::GREEN_PRODUCT_BASE || detectedPart == Parts_t::METTAL_PRODUCT_BASE;
+}
+
 uint16_t FactoryIO::vision_t::getPartID() {
 	if (_mode != visionMode_t::ALL_ID)
 		throw std::domain_error("feature not avalable due to wrong mode");
@@ -168,17 +183,57 @@ FactoryIO::Parts_t FactoryIO::vision_t::getPartDigital() {
 	internal::checkModbusAddr(_bit1Addr);
 	internal::checkModbusAddr(_bit2Addr);
 	internal::checkModbusAddr(_bit3Addr);
+	bool bit0 = false;
+	bool bit1 = false;
+	bool bit2 = false;
+	bool bit3 = false;
 
-	byte bitfield = 0;
-	bitfield |= _bit0Addr << 0;
-	bitfield |= _bit1Addr << 1;
-	bitfield |= _bit2Addr << 2;
-	bitfield |= _bit3Addr << 3;
+	_mb.modbus_read_input_bits(_bit0Addr, 1, &bit0);
+	_mb.modbus_read_input_bits(_bit1Addr, 1, &bit1);
+	_mb.modbus_read_input_bits(_bit2Addr, 1, &bit2);
+	_mb.modbus_read_input_bits(_bit3Addr, 1, &bit3);
 
-	return Parts_t();
+	byte numericalValue = 0;
+	numericalValue |= bit0 << 0;
+	numericalValue |= bit1 << 1;
+	numericalValue |= bit2 << 2;
+	numericalValue |= bit3 << 3;
+
+	return getPartNumerical(numericalValue);
 }
 
 FactoryIO::Parts_t FactoryIO::vision_t::getPartNumerical() {
-	return Parts_t();
+	internal::checkModbusAddr(_bitfieldAddr);
+	uint16_t partValue = 0;
+	_mb.modbus_read_input_registers(_bitfieldAddr, 1, &partValue);
+
+	return getPartNumerical(partValue);
+}
+
+FactoryIO::Parts_t FactoryIO::vision_t::getPartNumerical(uint16_t partNumber) {
+	switch (partNumber) {
+	case 0: 
+		return Parts_t::NO_PART;
+	case 1: 
+		return Parts_t::BLUE_RAW_MATERIAL;
+	case 2:
+		return Parts_t::BLUE_PRODUCT_LID;
+	case 3:
+		return Parts_t::BLUE_PRODUCT_BASE;
+	case 4:
+		return Parts_t::GREEN_RAW_MATERIAL;
+	case 5:
+		return Parts_t::GREEN_PRODUCT_LID;
+	case 6:
+		return Parts_t::GREEN_PRODUCT_BASE;
+	case 7:
+		return Parts_t::METTAL_RAW_MATERIAL;
+	case 8:
+		return Parts_t::METTAL_PRODUCT_LID;
+	case 9:
+		return Parts_t::METTAL_PRODUCT_BASE;
+	default:
+		throw std::runtime_error("unreachable state reached.");
+	}
 }
 

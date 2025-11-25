@@ -68,28 +68,26 @@ void FactoryIO::pusher_t::push(bool forward) {
 }
 
 bool FactoryIO::pusher_t::isAtFront() {
+	bool frontLimit = false;
+	uint16_t position = 0;
 	switch (_mode) {
 	case FactoryIO::pusherMode_t::MONOSTABLE:
 		internal::checkModbusAddr(_frontLimitAddr);
-		bool frontLimit = false;
 		_mb.modbus_read_input_bits(_frontLimitAddr, 1, &frontLimit);
 		return frontLimit;
 
 	case FactoryIO::pusherMode_t::BISTABLE:
 		internal::checkModbusAddr(_frontLimitAddr);
-		bool frontLimit = false;
 		_mb.modbus_read_input_bits(_frontLimitAddr, 1, &frontLimit);
 		return frontLimit;
 
 	case FactoryIO::pusherMode_t::ANALOG:
 		internal::checkModbusAddr(_pusherPositionAddr);
-		uint16_t position = 0;
 		_mb.modbus_read_input_registers(_pusherPositionAddr, 1, &position);
 		return position <= _acceptableOffDistance * _scaleFactor;
 
 	case FactoryIO::pusherMode_t::DIGITAL_ANALOG:
 		internal::checkModbusAddr(_frontLimitAddr);
-		bool frontLimit = false;
 		_mb.modbus_read_input_bits(_frontLimitAddr, 1, &frontLimit);
 		return frontLimit;
 
@@ -99,28 +97,26 @@ bool FactoryIO::pusher_t::isAtFront() {
 }
 
 bool FactoryIO::pusher_t::isAtBack() {
+	bool frontLimit = false;
+	uint16_t position = 0;
 	switch (_mode) {
 	case FactoryIO::pusherMode_t::MONOSTABLE:
 		internal::checkModbusAddr(_backLimitAddr);
-		bool frontLimit = false;
 		_mb.modbus_read_input_bits(_backLimitAddr, 1, &frontLimit);
 		return frontLimit;
 
 	case FactoryIO::pusherMode_t::BISTABLE:
 		internal::checkModbusAddr(_backLimitAddr);
-		bool frontLimit = false;
 		_mb.modbus_read_input_bits(_backLimitAddr, 1, &frontLimit);
 		return frontLimit;
 
 	case FactoryIO::pusherMode_t::ANALOG:
 		internal::checkModbusAddr(_pusherPositionAddr);
-		uint16_t position = 0;
 		_mb.modbus_read_input_registers(_pusherPositionAddr, 1, &position);
 		return position >= _scaleFactor * 10 - _acceptableOffDistance * _scaleFactor;
 
 	case FactoryIO::pusherMode_t::DIGITAL_ANALOG:
 		internal::checkModbusAddr(_backLimitAddr);
-		bool frontLimit = false;
 		_mb.modbus_read_input_bits(_backLimitAddr, 1, &frontLimit);
 		return frontLimit;
 
@@ -142,7 +138,7 @@ float FactoryIO::pusher_t::getPosition() {
 void FactoryIO::pusher_t::setPushSpeed(float speed) {
 	if (speed > 1.0f || speed < 0.0f)
 		throw std::out_of_range("speed out of range 1.0f - 0.0f");
-	_pushSpeed = map(speed, 0.0f, 1.0f, 0.0f, 10.0f * _scaleFactor);
+	_pushSpeed = map<float>(speed, 0.0f, 1.0f, 0.0f, 10.0f * static_cast<float>(_scaleFactor));
 }
 
 bool FactoryIO::pusher_t::targetPosition(float targetPos) {
@@ -182,7 +178,7 @@ void FactoryIO::pusher_t::update() {
 	if (_moveToTargetPos) {
 		uint16_t positionRaw = 0;
 		_mb.modbus_read_input_registers(_pusherPositionAddr, 1, &positionRaw);
-		float position = map<float>(positionRaw, 0.0f, 10.0f * _scaleFactor, 0.0f, 1.0f);
+		float position = map<float>(positionRaw, 0.0f, 10.0f * static_cast<float>(_scaleFactor), 0.0f, 1.0f);
 
 		if (position > _targetPos + _acceptableOffDistance || position < _targetPos - _acceptableOffDistance) {
 			_moveToTargetPos = false;
@@ -195,7 +191,7 @@ void FactoryIO::pusher_t::update() {
 		if (_targetPos < position)
 			speed *= -1.0f; // invert speed
 
-		_mb.modbus_write_register(_pusherSetpointAddr, map<float>(speed, -1.0f, 1.0f, -10.0f * _scaleFactor, 10.0f * _scaleFactor));
+		_mb.modbus_write_register(_pusherSetpointAddr, map<float>(speed, -1.0f, 1.0f, -10.0f * static_cast<float>(_scaleFactor), 10.0f * static_cast<float>(_scaleFactor)));
 	}
 
 }

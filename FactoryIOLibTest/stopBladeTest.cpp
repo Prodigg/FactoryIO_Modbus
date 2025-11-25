@@ -22,9 +22,9 @@ namespace _1FactoryIOLibTest_module {
 
 			FactoryIO::stopBlade_t stopBlade(mb, stopBladeAddr);
 			stopBlade.setStopBladeState(true);
-			Assert::IsTrue(FactoryIO::internal::testing::getModbusCoilState(mb, stopBladeAddr));
+			Assert::IsTrue(FactoryIO::internal::testing::getModbusCoilState(stopBladeAddr, mb));
 			stopBlade.setStopBladeState(false);
-			Assert::IsFalse(FactoryIO::internal::testing::getModbusCoilState(mb, stopBladeAddr));
+			Assert::IsFalse(FactoryIO::internal::testing::getModbusCoilState(stopBladeAddr, mb));
 
 			mb.modbus_close();
 		}

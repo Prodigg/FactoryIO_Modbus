@@ -57,5 +57,6 @@ namespace FactoryIO {
 
 		Parts_t getPartDigital();
 		Parts_t getPartNumerical();
+		Parts_t getPartNumerical(uint16_t partNumber);
 	};
 }

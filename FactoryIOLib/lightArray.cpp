@@ -99,10 +99,12 @@ FactoryIO::lightArray_t FactoryIO::lightArray_t::constructAnalog(modbus& mb, mod
 }
 
 uint16_t FactoryIO::lightArray_t::getBitfieled() {
+	uint16_t bitfield = 0;
+	std::vector<bool> bitfieldArray;
+	bool beamState = false;
 	switch (_mode) {
 	case FactoryIO::lightArrayMode_t::NUMERICAL:
 		internal::checkModbusAddr(_valueAddr);
-		uint16_t bitfield = 0;
 		_mb.modbus_read_input_registers(_valueAddr, 1, &bitfield);
 		return bitfield;
 	case FactoryIO::lightArrayMode_t::DIGITAL:
@@ -115,8 +117,6 @@ uint16_t FactoryIO::lightArray_t::getBitfieled() {
 		internal::checkModbusAddr(_beam7Addr);
 		internal::checkModbusAddr(_beam8Addr);
 		internal::checkModbusAddr(_beam9Addr);
-		std::vector<bool> bitfieldArray;
-		bool beamState = false;
 		_mb.modbus_read_input_bits(_beam1Addr, 1, &beamState);
 		bitfieldArray.push_back(beamState);
 		_mb.modbus_read_input_bits(_beam2Addr, 1, &beamState);
@@ -168,7 +168,7 @@ uint16_t FactoryIO::lightArray_t::getNumberOfBeamsInterupted() {
 		_mb.modbus_read_input_registers(_analogInput, 1, &analogValue);
 		if (analogValue == 0)
 			return 0;
-		return 10 * (static_cast<float>(analogValue) / static_cast<float>(_scaleFactor)) / 8;
+		return static_cast<uint16_t>(10 * (static_cast<float>(analogValue) / static_cast<float>(_scaleFactor)) / 8);
 	}
 
 	std::vector<bool> bitfieldArray = internal::BitfieldEnumMapper_t::toBool(getBitfieled());

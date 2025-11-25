@@ -51,7 +51,7 @@ namespace FactoryIO {
 		float _targetPos = 0;
 
 		std::optional<std::function<float(float)>> _speedFunction;
-		float _acceptableOffDistance = 0.2;
+		float _acceptableOffDistance = 0.2f;
 
 		bool _moveToTargetPos = false;
 
