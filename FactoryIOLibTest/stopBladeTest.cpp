@@ -11,8 +11,7 @@ using namespace FactoryIO::internal::testing;
 namespace _1FactoryIOLibTest_module {
 	TEST_CLASS(stopBlade) {
 		TEST_METHOD(usage) {
-			constexpr FactoryIO::modbusAddr_t stopBladeAddr = 0;
-			Assert::Fail(L"add correct address");
+			constexpr FactoryIO::modbusAddr_t stopBladeAddr = 24;
 
 			modbus mb = modbus("127.0.0.1", 502);
 			mb.modbus_set_slave_id(1);
