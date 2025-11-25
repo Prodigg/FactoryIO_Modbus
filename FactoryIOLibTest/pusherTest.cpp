@@ -4,6 +4,7 @@
 #include <chrono>
 #include <thread>
 #include <functional>
+#include <stdexcept>
 
 using namespace Microsoft::VisualStudio::CppUnitTestFramework;
 using namespace FactoryIO::internal::testing;
@@ -21,23 +22,23 @@ namespace _1FactoryIOLibTest_module {
 			FactoryIO::pusher_t pusherAnalog = FactoryIO::pusher_t::constructAnalog(mb, NO_MODBUS_ADDR, NO_MODBUS_ADDR, 1);
 			FactoryIO::pusher_t pusherAnalogDigital = FactoryIO::pusher_t::constructAnalogDigital(mb, NO_MODBUS_ADDR, NO_MODBUS_ADDR, NO_MODBUS_ADDR, NO_MODBUS_ADDR, 1);
 
-			Assert::ExpectException<std::runtime_error, std::function<void(void)>>(
+			Assert::ExpectException<std::domain_error, std::function<void(void)>>(
 				[&](void) -> void {
 					pusherMonostable.getPosition();
 				}, L"No exception when getPosition is called with monostable"
 			);
-			Assert::ExpectException<std::runtime_error, std::function<void(void)>>(
+			Assert::ExpectException<std::domain_error, std::function<void(void)>>(
 				[&](void) -> void {
 					pusherBistable.getPosition();
 				}, L"No exception when getPosition is called with bistable"
 			);
 			
-			Assert::ExpectException<std::runtime_error, std::function<void(void)>>(
+			Assert::ExpectException<std::domain_error, std::function<void(void)>>(
 				[&](void) -> void {
 					pusherMonostable.targetPosition(1);
 				}, L"No exception when targetPosition is called with monostable"
 			);
-			Assert::ExpectException<std::runtime_error, std::function<void(void)>>(
+			Assert::ExpectException<std::domain_error, std::function<void(void)>>(
 				[&](void) -> void {
 					pusherBistable.targetPosition(1);
 				}, L"No exception when targetPosition is called with bistable"

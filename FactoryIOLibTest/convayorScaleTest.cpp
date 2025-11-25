@@ -24,7 +24,7 @@ namespace _1FactoryIOLibTest_module {
 		}
 		TEST_METHOD(exceptions) {
 			modbus mb = modbus("127.0.0.1", 502);
-			FactoryIO::convayorScale_t scale(mb, 0, 0, NO_ADDRESS, 0);
+			FactoryIO::convayorScale_t scale(mb, 0, 0, FactoryIO::NO_MODBUS_ADDR, 0);
 			Assert::ExpectException < std::runtime_error, std::function<void(void)>>(
 				[&](void) -> void {
 					scale.getCurrentWeight();
