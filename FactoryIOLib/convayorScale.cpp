@@ -14,11 +14,12 @@ FactoryIO::convayorScale_t::convayorScale_t(
     NO_MODBUS_ADDR, 
     ConvayorMode_t::DIGITAL_PLUS_MINUS,
     scaleFactor), 
-   _currentWeightIndex(currentWeight) { }
+   _currentWeightIndex(currentWeight),
+   _scaleFactor(scaleFactor) { }
 
 double FactoryIO::convayorScale_t::getCurrentWeight() {
   FactoryIO::internal::checkModbusAddr(_currentWeightIndex);
   uint16_t currentWeight = 0;
   mb.modbus_read_input_registers(_currentWeightIndex, 1, &currentWeight);
-  return map<double>(currentWeight, 0.0, 10.0, 0.0, 1);
+  return map<double>(currentWeight, 0.0, 10.0 * static_cast<float>(_scaleFactor), 0.0, 1);
 }

@@ -15,5 +15,6 @@ namespace FactoryIO {
 
 	private:
 		modbusAddr_t _currentWeightIndex;
+		uint16_t _scaleFactor = 0;
 	};
 }

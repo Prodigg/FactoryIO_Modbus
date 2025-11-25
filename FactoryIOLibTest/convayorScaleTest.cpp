@@ -12,13 +12,17 @@ namespace _1FactoryIOLibTest_module {
 	TEST_CLASS(convayorScale) {
 
 		TEST_METHOD(scale) {
+			constexpr uint16_t scaleFactor = 100;
+			constexpr FactoryIO::modbusAddr_t weigherSignalAddr = 2;
 			modbus mb = modbus("127.0.0.1", 502);
 			mb.modbus_set_slave_id(1);
 			if (!mb.modbus_connect()) {
 				Assert::Fail(L"Couldn't connect to FactoryIO");
 			}
 
-			Assert::Fail(L"add test");
+			FactoryIO::convayorScale_t scale(mb, 0, 0, weigherSignalAddr, scaleFactor);
+
+			Assert::AreEqual(0.1, scale.getCurrentWeight(), 0.05);
 
 			mb.modbus_close();
 		}
