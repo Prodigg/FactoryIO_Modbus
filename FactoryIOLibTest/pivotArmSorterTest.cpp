@@ -11,17 +11,20 @@ using namespace FactoryIO::internal::testing;
 namespace _1FactoryIOLibTest_module {
 	TEST_CLASS(pivotArm) {
 		TEST_METHOD(arm) {
-			constexpr FactoryIO::modbusAddr_t convayorPlusAddr = 0;
-			constexpr FactoryIO::modbusAddr_t convayorMinusAddr = 0;
-			constexpr FactoryIO::modbusAddr_t pivotArmAddr = 0;
+			constexpr FactoryIO::modbusAddr_t pivotArmAddr = 18;
 			
 			modbus mb = modbus("127.0.0.1", 502);
 			mb.modbus_set_slave_id(1);
 			if (!mb.modbus_connect()) {
 				Assert::Fail(L"Couldn't connect to FactoryIO");
 			}
-			FactoryIO::pivotArmSorter_t pivotArmSorter(mb, convayorPlusAddr, convayorMinusAddr, pivotArmAddr);
-			Assert::Fail(L"write unit tests");
+			FactoryIO::pivotArmSorter_t pivotArmSorter(mb, 0, 0, pivotArmAddr);
+			
+			pivotArmSorter.setArmPosition(true);
+			Assert::IsTrue(FactoryIO::internal::testing::getModbusCoilState(pivotArmAddr, mb));
+
+			pivotArmSorter.setArmPosition(false);
+			Assert::IsFalse(FactoryIO::internal::testing::getModbusCoilState(pivotArmAddr, mb));
 
 			mb.modbus_close();
 		}
