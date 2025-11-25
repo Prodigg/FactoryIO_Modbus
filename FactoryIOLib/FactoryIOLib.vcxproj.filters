@@ -117,6 +117,9 @@
     <ClCompile Include="lightArray.cpp">
       <Filter>Quelldateien\Parts\Sensors</Filter>
     </ClCompile>
+    <ClCompile Include="vision.cpp">
+      <Filter>Quelldateien\Parts\Sensors</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="modbus.h">
@@ -183,6 +186,9 @@
       <Filter>Headerdateien\Parts\Sensors</Filter>
     </ClInclude>
     <ClInclude Include="lightArray.h">
+      <Filter>Headerdateien\Parts\Sensors</Filter>
+    </ClInclude>
+    <ClInclude Include="vision.h">
       <Filter>Headerdateien\Parts\Sensors</Filter>
     </ClInclude>
   </ItemGroup>

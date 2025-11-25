@@ -35,3 +35,4 @@
 #include "positioningBar.h"
 #include "digitalSensor.h"
 #include "analogSensor.h"
+#include "lightArray.h"

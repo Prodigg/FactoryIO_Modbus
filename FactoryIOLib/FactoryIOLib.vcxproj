@@ -149,6 +149,7 @@
     <ClCompile Include="StackLight.cpp" />
     <ClCompile Include="stopBlade.cpp" />
     <ClCompile Include="turntable.cpp" />
+    <ClCompile Include="vision.cpp" />
     <ClCompile Include="WarningLight.cpp" />
     <ClCompile Include="weelSorter.cpp" />
   </ItemGroup>
@@ -173,6 +174,7 @@
     <ClInclude Include="StackLight.h" />
     <ClInclude Include="stopBlade.h" />
     <ClInclude Include="turntable.h" />
+    <ClInclude Include="vision.h" />
     <ClInclude Include="WarningLight.h" />
     <ClInclude Include="weelSorter.h" />
   </ItemGroup>
