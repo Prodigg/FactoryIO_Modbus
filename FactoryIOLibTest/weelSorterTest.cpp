@@ -16,48 +16,44 @@ namespace _1FactoryIOLibTest_module {
 			constexpr FactoryIO::modbusAddr_t leftAddr = 16;
 			constexpr FactoryIO::modbusAddr_t rightAddr = 17;
 
-			modbus mb = modbus("127.0.0.1", 502);
-			mb.modbus_set_slave_id(1);
-			if (!mb.modbus_connect()) {
-				Assert::Fail(L"Couldn't connect to FactoryIO");
-			}
+			FactoryIO::ModbusProvider_t mb("127.0.0.1", 502, 1);
+
 			FactoryIO::weelSorter_t weelSorter(mb, plusAddr, minusAddr, leftAddr, rightAddr);
 
 			weelSorter.moveForward();
-			Assert::IsTrue(FactoryIO::internal::testing::getModbusCoilState(plusAddr, mb));
-			Assert::IsFalse(FactoryIO::internal::testing::getModbusCoilState(leftAddr, mb));
-			Assert::IsFalse(FactoryIO::internal::testing::getModbusCoilState(rightAddr, mb));
-			Assert::IsFalse(FactoryIO::internal::testing::getModbusCoilState(minusAddr, mb));
+			Assert::IsTrue(FactoryIO::internal::testing::getModbusCoilState(plusAddr, mb.getModbus()));
+			Assert::IsFalse(FactoryIO::internal::testing::getModbusCoilState(leftAddr, mb.getModbus()));
+			Assert::IsFalse(FactoryIO::internal::testing::getModbusCoilState(rightAddr, mb.getModbus()));
+			Assert::IsFalse(FactoryIO::internal::testing::getModbusCoilState(minusAddr, mb.getModbus()));
 
 			weelSorter.moveLeft();
-			Assert::IsTrue(FactoryIO::internal::testing::getModbusCoilState(plusAddr, mb));
-			Assert::IsTrue(FactoryIO::internal::testing::getModbusCoilState(leftAddr, mb));
-			Assert::IsFalse(FactoryIO::internal::testing::getModbusCoilState(rightAddr, mb));
-			Assert::IsFalse(FactoryIO::internal::testing::getModbusCoilState(minusAddr, mb));
+			Assert::IsTrue(FactoryIO::internal::testing::getModbusCoilState(plusAddr, mb.getModbus()));
+			Assert::IsTrue(FactoryIO::internal::testing::getModbusCoilState(leftAddr, mb.getModbus()));
+			Assert::IsFalse(FactoryIO::internal::testing::getModbusCoilState(rightAddr, mb.getModbus()));
+			Assert::IsFalse(FactoryIO::internal::testing::getModbusCoilState(minusAddr, mb.getModbus()));
 
 			weelSorter.moveRight();
-			Assert::IsTrue(FactoryIO::internal::testing::getModbusCoilState(plusAddr, mb));
-			Assert::IsFalse(FactoryIO::internal::testing::getModbusCoilState(leftAddr, mb));
-			Assert::IsTrue(FactoryIO::internal::testing::getModbusCoilState(rightAddr, mb));
-			Assert::IsFalse(FactoryIO::internal::testing::getModbusCoilState(minusAddr, mb));
+			Assert::IsTrue(FactoryIO::internal::testing::getModbusCoilState(plusAddr, mb.getModbus()));
+			Assert::IsFalse(FactoryIO::internal::testing::getModbusCoilState(leftAddr, mb.getModbus()));
+			Assert::IsTrue(FactoryIO::internal::testing::getModbusCoilState(rightAddr, mb.getModbus()));
+			Assert::IsFalse(FactoryIO::internal::testing::getModbusCoilState(minusAddr, mb.getModbus()));
 
 			weelSorter.moveBackward();
-			Assert::IsFalse(FactoryIO::internal::testing::getModbusCoilState(plusAddr, mb));
-			Assert::IsFalse(FactoryIO::internal::testing::getModbusCoilState(leftAddr, mb));
-			Assert::IsFalse(FactoryIO::internal::testing::getModbusCoilState(rightAddr, mb));
-			Assert::IsTrue(FactoryIO::internal::testing::getModbusCoilState(minusAddr, mb));
+			Assert::IsFalse(FactoryIO::internal::testing::getModbusCoilState(plusAddr, mb.getModbus()));
+			Assert::IsFalse(FactoryIO::internal::testing::getModbusCoilState(leftAddr, mb.getModbus()));
+			Assert::IsFalse(FactoryIO::internal::testing::getModbusCoilState(rightAddr, mb.getModbus()));
+			Assert::IsTrue(FactoryIO::internal::testing::getModbusCoilState(minusAddr, mb.getModbus()));
 
 			weelSorter.stop();
-			Assert::IsFalse(FactoryIO::internal::testing::getModbusCoilState(plusAddr, mb));
-			Assert::IsFalse(FactoryIO::internal::testing::getModbusCoilState(leftAddr, mb));
-			Assert::IsFalse(FactoryIO::internal::testing::getModbusCoilState(rightAddr, mb));
-			Assert::IsFalse(FactoryIO::internal::testing::getModbusCoilState(minusAddr, mb));
+			Assert::IsFalse(FactoryIO::internal::testing::getModbusCoilState(plusAddr, mb.getModbus()));
+			Assert::IsFalse(FactoryIO::internal::testing::getModbusCoilState(leftAddr, mb.getModbus()));
+			Assert::IsFalse(FactoryIO::internal::testing::getModbusCoilState(rightAddr, mb.getModbus()));
+			Assert::IsFalse(FactoryIO::internal::testing::getModbusCoilState(minusAddr, mb.getModbus()));
 
-			mb.modbus_close();
 		}
 
 		TEST_METHOD(exceptions) {
-			modbus mb = modbus("127.0.0.1", 502);
+			FactoryIO::ModbusProvider_t mb("127.0.0.1", 502, 1);
 
 			Assert::ExpectException<std::runtime_error, std::function<void(void)>>(
 				[&](void) -> void {
@@ -85,8 +81,6 @@ namespace _1FactoryIOLibTest_module {
 					weelSorter.moveBackward();
 				}, L"No exception when moveBackward is called and no Modbus Address was provided for minusAddr"
 			);
-
-			mb.modbus_close();
 		}
 	};
 }

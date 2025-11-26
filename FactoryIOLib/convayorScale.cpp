@@ -1,7 +1,7 @@
 #include "convayorScale.h"
 
 FactoryIO::convayorScale_t::convayorScale_t(
-  modbus mb, 
+  ModbusProvider_t& mb, 
   modbusAddr_t digitalPlus, 
   modbusAddr_t digitalMinus, 
   modbusAddr_t currentWeight, 
@@ -19,7 +19,6 @@ FactoryIO::convayorScale_t::convayorScale_t(
 
 double FactoryIO::convayorScale_t::getCurrentWeight() {
   FactoryIO::internal::checkModbusAddr(_currentWeightIndex);
-  uint16_t currentWeight = 0;
-  mb.modbus_read_input_registers(_currentWeightIndex, 1, &currentWeight);
+  uint16_t currentWeight = mb.readInputRegister(_currentWeightIndex);
   return map<double>(currentWeight, 0.0, 10.0 * static_cast<float>(_scaleFactor), 0.0, 1);
 }

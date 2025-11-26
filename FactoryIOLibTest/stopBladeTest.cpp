@@ -13,22 +13,16 @@ namespace _1FactoryIOLibTest_module {
 		TEST_METHOD(usage) {
 			constexpr FactoryIO::modbusAddr_t stopBladeAddr = 24;
 
-			modbus mb = modbus("127.0.0.1", 502);
-			mb.modbus_set_slave_id(1);
-			if (!mb.modbus_connect()) {
-				Assert::Fail(L"Couldn't connect to FactoryIO");
-			}
+			FactoryIO::ModbusProvider_t mb("127.0.0.1", 502, 1);
 
 			FactoryIO::stopBlade_t stopBlade(mb, stopBladeAddr);
 			stopBlade.setStopBladeState(true);
-			Assert::IsTrue(FactoryIO::internal::testing::getModbusCoilState(stopBladeAddr, mb));
+			Assert::IsTrue(FactoryIO::internal::testing::getModbusCoilState(stopBladeAddr, mb.getModbus()));
 			stopBlade.setStopBladeState(false);
-			Assert::IsFalse(FactoryIO::internal::testing::getModbusCoilState(stopBladeAddr, mb));
-
-			mb.modbus_close();
+			Assert::IsFalse(FactoryIO::internal::testing::getModbusCoilState(stopBladeAddr, mb.getModbus()));
 		}
 		TEST_METHOD(exceptions) {
-			modbus mb = modbus("127.0.0.1", 502);
+			FactoryIO::ModbusProvider_t mb("127.0.0.1", 502, 1);
 
 			Assert::ExpectException<std::runtime_error, std::function<void(void)>>(
 				[&](void) -> void {
@@ -36,8 +30,6 @@ namespace _1FactoryIOLibTest_module {
 					stopBlade.setStopBladeState(true);
 				}, L"No exception when setStopBladeState is called and no Modbus Address was provided for stopBlade"
 			);
-
-			mb.modbus_close();
 		}
 	};
 }

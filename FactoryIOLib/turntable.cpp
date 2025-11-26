@@ -3,7 +3,7 @@
 #include <stdexcept>
 
 FactoryIO::turntable_t::turntable_t(
-	modbus& mb,
+	ModbusProvider_t& mb,
 	modbusAddr_t rollPlus,
 	modbusAddr_t rollMinus,
 	modbusAddr_t frontLimit,
@@ -75,20 +75,19 @@ void FactoryIO::turntable_t::update() {
 }
 
 bool FactoryIO::turntable_t::pickupDone() {
-	bool sensorState = false;
 	if (_pickupPos == direction_t::FRONT || _pickupPos == direction_t::RIGHT)
-		_mb.modbus_read_input_bits(_backLimitIndex, 1, &sensorState);
+		return _mb.readInputBit(_backLimitIndex);
 	if (_pickupPos == direction_t::BACK || _pickupPos == direction_t::LEFT)
-		_mb.modbus_read_input_bits(_frontLimitIndex, 1, &sensorState);
-	return sensorState;
+		return _mb.readInputBit(_frontLimitIndex);
+	return false;
 }
 
 bool FactoryIO::turntable_t::transferingComplete() {
 	bool sensorState = false;
 	if (_transferPos == direction_t::FRONT || _transferPos == direction_t::RIGHT)
-		_mb.modbus_read_input_bits(_frontLimitIndex, 1, &sensorState);
+		sensorState = _mb.readInputBit(_frontLimitIndex);
 	if (_transferPos == direction_t::BACK || _transferPos == direction_t::LEFT)
-		_mb.modbus_read_input_bits(_backLimitIndex, 1, &sensorState);
+		sensorState = _mb.readInputBit(_backLimitIndex);
 
 	if (sensorState == false && _transferSensorState == true) {
 		_transferSensorState = sensorState;
@@ -101,17 +100,17 @@ bool FactoryIO::turntable_t::transferingComplete() {
 bool FactoryIO::turntable_t::turnTurntable(bool turn) {
 	bool limitSwitch = false;
 	if (turn) 
-		_mb.modbus_read_input_bits(_limit90Index, 1, &limitSwitch);
+		limitSwitch = _mb.readInputBit(_limit90Index);
 	else
-		_mb.modbus_read_input_bits(_limit0Index, 1, &limitSwitch);
+		limitSwitch = _mb.readInputBit(_limit0Index);
 
 	if (limitSwitch) {
 		_turning = false;
 		if (_mode == turntableMode_t::MONOSTABLE)
-			_mb.modbus_write_coil(_turnIndex, false);
+			_mb.writeCoil(_turnIndex, false);
 		if (_mode == turntableMode_t::BISTABLE) {
-			_mb.modbus_write_coil(_turnPlusIndex, false);
-			_mb.modbus_write_coil(_turnMinusIndex, false);
+			_mb.writeCoil(_turnPlusIndex, false);
+			_mb.writeCoil(_turnMinusIndex, false);
 		}
 		return true;
 	}
@@ -121,10 +120,10 @@ bool FactoryIO::turntable_t::turnTurntable(bool turn) {
 		_turning = true;
 		_turningLastState = turn;
 		if (_mode == turntableMode_t::MONOSTABLE)
-			_mb.modbus_write_coil(_turnIndex, turn);
+			_mb.writeCoil(_turnIndex, turn);
 		if (_mode == turntableMode_t::BISTABLE) {
-			_mb.modbus_write_coil(_turnPlusIndex, turn);
-			_mb.modbus_write_coil(_turnMinusIndex, !turn);
+			_mb.writeCoil(_turnPlusIndex, turn);
+			_mb.writeCoil(_turnMinusIndex, !turn);
 		}
 	}
 	return false;
@@ -138,13 +137,13 @@ void FactoryIO::turntable_t::setConvayingDirection(direction_t direction) {
 	if (_lastConvayingState != (direction == direction_t::FRONT || direction == direction_t::RIGHT) || !_convaying) {
 		_convaying = true;
 		_lastConvayingState = (direction == direction_t::FRONT || direction == direction_t::RIGHT);
-		_mb.modbus_write_coil(_rollPlusIndex, (direction == direction_t::FRONT || direction == direction_t::RIGHT));
-		_mb.modbus_write_coil(_rollMinusIndex, !(direction == direction_t::FRONT || direction == direction_t::RIGHT));
+		_mb.writeCoil(_rollPlusIndex, (direction == direction_t::FRONT || direction == direction_t::RIGHT));
+		_mb.writeCoil(_rollMinusIndex, !(direction == direction_t::FRONT || direction == direction_t::RIGHT));
 	}
 }
 
 void FactoryIO::turntable_t::stopConveying() {
 	_convaying = false;
-	_mb.modbus_write_coil(_rollPlusIndex, false);
-	_mb.modbus_write_coil(_rollMinusIndex, false);
+	_mb.writeCoil(_rollPlusIndex, false);
+	_mb.writeCoil(_rollMinusIndex, false);
 }

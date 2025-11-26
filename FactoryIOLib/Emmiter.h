@@ -1,5 +1,6 @@
 #pragma once
 #include "FactoryIOGeneral.h"
+#include "modbusProvider.h"
 #include <vector>
 
 namespace FactoryIO {
@@ -7,7 +8,7 @@ namespace FactoryIO {
 
 	class emmiter_t {
 	public:
-		emmiter_t(modbus& mb, modbusAddr_t emmitAddr, modbusAddr_t partAddr, modbusAddr_t baseAddr);
+		emmiter_t(ModbusProvider_t& mb, modbusAddr_t emmitAddr, modbusAddr_t partAddr, modbusAddr_t baseAddr);
 		void emmit(bool state);
 		void setParts(const std::vector<Parts_t> partsToEmmit);
 		void setBase(const std::vector<Bases_t> basesToEmmit);
@@ -22,7 +23,7 @@ namespace FactoryIO {
 		bool _emmit = false;
 		int _part = 0;
 		int _base = 0;
-		modbus& _mb;
+		ModbusProvider_t& _mb;
 		
 	};
 }

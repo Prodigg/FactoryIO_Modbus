@@ -1,11 +1,12 @@
 #pragma once
 #include "FactoryIOGeneral.h"
+#include "modbusProvider.h"
 
 namespace FactoryIO {
 
 	class remover_t {
 	public:
-		remover_t(modbus& _mb, modbusAddr_t partsToRemove, modbusAddr_t basesToRemove, modbusAddr_t detectedParts, modbusAddr_t detectedBases);
+		remover_t(ModbusProvider_t& _mb, modbusAddr_t partsToRemove, modbusAddr_t basesToRemove, modbusAddr_t detectedParts, modbusAddr_t detectedBases);
 		void setPartsToRemove(const std::vector<FactoryIO::Parts_t> parts);
 		void setBasesToRemove(const std::vector<FactoryIO::Bases_t> bases);
 		
@@ -13,7 +14,7 @@ namespace FactoryIO {
 		std::vector<FactoryIO::Bases_t> getDetectedBases();
 
 	private:
-		modbus& _mb;
+		ModbusProvider_t& _mb;
 
 		modbusAddr_t _partsToRemoveAddr;
 		modbusAddr_t _basesToRemoveAddr;

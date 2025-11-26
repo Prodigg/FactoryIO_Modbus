@@ -1,6 +1,7 @@
 #include "pch.h"
 #include "CppUnitTest.h"
 #include <FactoryIO.h>
+#include <modbusProvider.h>
 #include <chrono>
 #include <thread>
 #include <functional>
@@ -21,11 +22,7 @@ namespace _1FactoryIOLibTest_module {
 			constexpr FactoryIO::modbusAddr_t turntableTurnPlus = 0;
 			constexpr FactoryIO::modbusAddr_t turntableTurnMinus = 0;
 
-			modbus mb = modbus("127.0.0.1", 502);
-			mb.modbus_set_slave_id(1);
-			if (!mb.modbus_connect()) {
-				Assert::Fail(L"Couldn't connect to FactoryIO");
-			}
+			FactoryIO::ModbusProvider_t mb("127.0.0.1", 502, 1);
 			
 			FactoryIO::turntable_t turntable(
 				mb,
@@ -42,7 +39,6 @@ namespace _1FactoryIOLibTest_module {
 			);
 			// TODO: develop test with emmiter and convayor to test turntable
 			Assert::Fail(L"Develop tests here");
-			mb.modbus_close();
 		}
 		TEST_METHOD(bistable) {
 			constexpr FactoryIO::modbusAddr_t turntableRollPlus = 0;
@@ -55,11 +51,7 @@ namespace _1FactoryIOLibTest_module {
 			constexpr FactoryIO::modbusAddr_t turntableTurnPlus = 0;
 			constexpr FactoryIO::modbusAddr_t turntableTurnMinus = 0;
 
-			modbus mb = modbus("127.0.0.1", 502);
-			mb.modbus_set_slave_id(1);
-			if (!mb.modbus_connect()) {
-				Assert::Fail(L"Couldn't connect to FactoryIO");
-			}
+			FactoryIO::ModbusProvider_t mb("127.0.0.1", 502, 1);
 
 			FactoryIO::turntable_t turntable(
 				mb,
@@ -76,7 +68,6 @@ namespace _1FactoryIOLibTest_module {
 			);
 			// TODO: develop test with emmiter and convayor to test turntable
 			Assert::Fail(L"Develop tests here");
-			mb.modbus_close();
 		}
 		TEST_METHOD(exceptions) {
 			constexpr FactoryIO::modbusAddr_t turntableRollPlus = 0;
@@ -89,7 +80,7 @@ namespace _1FactoryIOLibTest_module {
 			constexpr FactoryIO::modbusAddr_t turntableTurnPlus = 0;
 			constexpr FactoryIO::modbusAddr_t turntableTurnMinus = 0;
 
-			modbus mb = modbus("127.0.0.1", 502);
+			FactoryIO::ModbusProvider_t mb("127.0.0.1", 502, 1);
 			Assert::ExpectException < std::runtime_error, std::function<void(void)>>(
 				[&]() -> void {
 					FactoryIO::turntable_t turntable(

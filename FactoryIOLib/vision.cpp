@@ -2,7 +2,7 @@
 #include <stdexcept>
 
 FactoryIO::vision_t::vision_t(
-	modbus& mb, 
+	ModbusProvider_t& mb, 
 	visionMode_t mode, 
 	modbusAddr_t singleDetectionAddr, 
 	modbusAddr_t bit0Addr, 
@@ -21,7 +21,7 @@ FactoryIO::vision_t::vision_t(
 	_bitfieldAddr(bitfieldAddr),
 	_IDAddr(IDAddr) { }
 
-FactoryIO::vision_t FactoryIO::vision_t::constructDetectBase(modbus& mb, modbusAddr_t singleDetectionAddr) {
+FactoryIO::vision_t FactoryIO::vision_t::constructDetectBase(ModbusProvider_t& mb, modbusAddr_t singleDetectionAddr) {
 	return vision_t(
 		mb, 
 		visionMode_t::DETECT_BASE, 
@@ -35,7 +35,7 @@ FactoryIO::vision_t FactoryIO::vision_t::constructDetectBase(modbus& mb, modbusA
 	);
 }
 
-FactoryIO::vision_t FactoryIO::vision_t::constructDetectLid(modbus& mb, modbusAddr_t singleDetectionAddr) {
+FactoryIO::vision_t FactoryIO::vision_t::constructDetectLid(ModbusProvider_t& mb, modbusAddr_t singleDetectionAddr) {
 	return vision_t(
 		mb,
 		visionMode_t::DETECT_LID,
@@ -49,7 +49,7 @@ FactoryIO::vision_t FactoryIO::vision_t::constructDetectLid(modbus& mb, modbusAd
 	);
 }
 
-FactoryIO::vision_t FactoryIO::vision_t::constructDetectRaw(modbus& mb, modbusAddr_t singleDetectionAddr) {
+FactoryIO::vision_t FactoryIO::vision_t::constructDetectRaw(ModbusProvider_t& mb, modbusAddr_t singleDetectionAddr) {
 	return vision_t(
 		mb,
 		visionMode_t::DETECT_RAW,
@@ -63,7 +63,7 @@ FactoryIO::vision_t FactoryIO::vision_t::constructDetectRaw(modbus& mb, modbusAd
 	);
 }
 
-FactoryIO::vision_t FactoryIO::vision_t::constructDetectAllDigital(modbus& mb, modbusAddr_t bit0Addr, modbusAddr_t bit1Addr, modbusAddr_t bit2Addr, modbusAddr_t bit3Addr) {
+FactoryIO::vision_t FactoryIO::vision_t::constructDetectAllDigital(ModbusProvider_t& mb, modbusAddr_t bit0Addr, modbusAddr_t bit1Addr, modbusAddr_t bit2Addr, modbusAddr_t bit3Addr) {
 	return vision_t(
 		mb,
 		visionMode_t::ALL_DIGITAL,
@@ -77,7 +77,7 @@ FactoryIO::vision_t FactoryIO::vision_t::constructDetectAllDigital(modbus& mb, m
 	);
 }
 
-FactoryIO::vision_t FactoryIO::vision_t::constructDetectNumerical(modbus& mb, modbusAddr_t bitfieldAddr) {
+FactoryIO::vision_t FactoryIO::vision_t::constructDetectNumerical(ModbusProvider_t& mb, modbusAddr_t bitfieldAddr) {
 	return vision_t(
 		mb,
 		visionMode_t::ALL_NUMERICAL,
@@ -91,7 +91,7 @@ FactoryIO::vision_t FactoryIO::vision_t::constructDetectNumerical(modbus& mb, mo
 	);
 }
 
-FactoryIO::vision_t FactoryIO::vision_t::constructDetectID(modbus& mb, modbusAddr_t IDAddr) {
+FactoryIO::vision_t FactoryIO::vision_t::constructDetectID(ModbusProvider_t& mb, modbusAddr_t IDAddr) {
 	return vision_t(
 		mb,
 		visionMode_t::ALL_ID,
@@ -108,9 +108,7 @@ FactoryIO::vision_t FactoryIO::vision_t::constructDetectID(modbus& mb, modbusAdd
 bool FactoryIO::vision_t::isPartPresent() {
 	if (_mode == visionMode_t::DETECT_BASE || _mode == visionMode_t::DETECT_LID || _mode == visionMode_t::DETECT_RAW) {
 		internal::checkModbusAddr(_singleDetectionAddr);
-		bool sensorState = false;
-		_mb.modbus_read_coils(_singleDetectionAddr, 1, &sensorState);
-		return sensorState;
+		return _mb.readInputBit(_singleDetectionAddr);
 	}
 
 	if (_mode == visionMode_t::ALL_ID) {
@@ -119,9 +117,7 @@ bool FactoryIO::vision_t::isPartPresent() {
 
 	if (_mode == visionMode_t::ALL_NUMERICAL) {
 		internal::checkModbusAddr(_bitfieldAddr);
-		uint16_t value = 0;
-		_mb.modbus_read_input_registers(_bitfieldAddr, 1, &value);
-		return value != 0;
+		return _mb.readInputRegister(_bitfieldAddr) != 0;
 	}
 
 	if (_mode == visionMode_t::ALL_DIGITAL) {
@@ -129,15 +125,10 @@ bool FactoryIO::vision_t::isPartPresent() {
 		internal::checkModbusAddr(_bit1Addr);
 		internal::checkModbusAddr(_bit2Addr);
 		internal::checkModbusAddr(_bit3Addr);
-		bool bitState = false;
-		_mb.modbus_read_input_bits(_bit0Addr, 1, &bitState);
-		if (bitState) return true;
-		_mb.modbus_read_input_bits(_bit1Addr, 1, &bitState);
-		if (bitState) return true;
-		_mb.modbus_read_input_bits(_bit2Addr, 1, &bitState);
-		if (bitState) return true;
-		_mb.modbus_read_input_bits(_bit3Addr, 1, &bitState);
-		if (bitState) return true;
+		if (_mb.readInputBit(_bit0Addr)) return true;
+		if (_mb.readInputBit(_bit1Addr)) return true;
+		if (_mb.readInputBit(_bit2Addr)) return true;
+		if (_mb.readInputBit(_bit3Addr)) return true;
 		return false;
 	}
 
@@ -163,9 +154,7 @@ uint16_t FactoryIO::vision_t::getPartID() {
 	if (_mode != visionMode_t::ALL_ID)
 		throw std::domain_error("feature not avalable due to wrong mode");
 	internal::checkModbusAddr(_IDAddr);
-	uint16_t id = 0;
-	_mb.modbus_read_input_registers(_IDAddr, 1, &id);
-	return id;
+	return _mb.readInputRegister(_IDAddr);
 }
 
 FactoryIO::Parts_t FactoryIO::vision_t::getDetectedPart() {
@@ -183,31 +172,19 @@ FactoryIO::Parts_t FactoryIO::vision_t::getPartDigital() {
 	internal::checkModbusAddr(_bit1Addr);
 	internal::checkModbusAddr(_bit2Addr);
 	internal::checkModbusAddr(_bit3Addr);
-	bool bit0 = false;
-	bool bit1 = false;
-	bool bit2 = false;
-	bool bit3 = false;
-
-	_mb.modbus_read_input_bits(_bit0Addr, 1, &bit0);
-	_mb.modbus_read_input_bits(_bit1Addr, 1, &bit1);
-	_mb.modbus_read_input_bits(_bit2Addr, 1, &bit2);
-	_mb.modbus_read_input_bits(_bit3Addr, 1, &bit3);
 
 	byte numericalValue = 0;
-	numericalValue |= bit0 << 0;
-	numericalValue |= bit1 << 1;
-	numericalValue |= bit2 << 2;
-	numericalValue |= bit3 << 3;
+	numericalValue |= _mb.readInputBit(_bit0Addr) << 0;
+	numericalValue |= _mb.readInputBit(_bit1Addr) << 1;
+	numericalValue |= _mb.readInputBit(_bit2Addr) << 2;
+	numericalValue |= _mb.readInputBit(_bit3Addr) << 3;
 
 	return getPartNumerical(numericalValue);
 }
 
 FactoryIO::Parts_t FactoryIO::vision_t::getPartNumerical() {
 	internal::checkModbusAddr(_bitfieldAddr);
-	uint16_t partValue = 0;
-	_mb.modbus_read_input_registers(_bitfieldAddr, 1, &partValue);
-
-	return getPartNumerical(partValue);
+	return getPartNumerical(_mb.readInputRegister(_bitfieldAddr));
 }
 
 FactoryIO::Parts_t FactoryIO::vision_t::getPartNumerical(uint16_t partNumber) {

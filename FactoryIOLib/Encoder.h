@@ -1,5 +1,6 @@
 #pragma once
 #include "FactoryIOGeneral.h"
+#include "modbusProvider.h"
 #include <thread>
 #include <atomic>
 #include <chrono>
@@ -11,8 +12,8 @@ namespace FactoryIO {
 	 */
 	class encoder_t {
 	public:
-		encoder_t(modbus& _mb, modbusAddr_t signalA, modbusAddr_t signalB);
-		encoder_t(modbus& _mb, modbusAddr_t signalA, modbusAddr_t signalB, bool startThreadImmidiantly);
+		encoder_t(ModbusProvider_t& _mb, modbusAddr_t signalA, modbusAddr_t signalB);
+		encoder_t(ModbusProvider_t& _mb, modbusAddr_t signalA, modbusAddr_t signalB, bool startThreadImmidiantly);
 		~encoder_t();
 		int getRotationCounter() { return _rotationCounter.load(); }
 		void setRotationCounter(int newValue) { _rotationCounter.store(newValue); _lostTrackOfEncoder.store(false); }
@@ -37,7 +38,7 @@ namespace FactoryIO {
 		void hybrid_sleep(std::chrono::nanoseconds duration);
 		void precise_sleep_ns(long long nanoseconds);
 
-		modbus& _mb;
+		ModbusProvider_t& _mb;
 		modbusAddr_t _signalAAddr; 
 		modbusAddr_t _signalBAddr;
 		

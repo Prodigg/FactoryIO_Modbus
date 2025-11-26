@@ -44,6 +44,7 @@
     <UseDebugLibraries>true</UseDebugLibraries>
     <PlatformToolset>v143</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
+    <EnableASAN>false</EnableASAN>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
@@ -141,6 +142,7 @@
     <ClCompile Include="FactoryIO.h" />
     <ClCompile Include="FactoryIOGeneral.cpp" />
     <ClCompile Include="lightArray.cpp" />
+    <ClCompile Include="modbusProvider.cpp" />
     <ClCompile Include="pivotArmSorter.cpp" />
     <ClCompile Include="positioningBar.cpp" />
     <ClCompile Include="pusher.cpp" />
@@ -166,6 +168,7 @@
     <ClInclude Include="FactoryIOGeneral.h" />
     <ClInclude Include="lightArray.h" />
     <ClInclude Include="modbus.h" />
+    <ClInclude Include="modbusProvider.h" />
     <ClInclude Include="pivotArmSorter.h" />
     <ClInclude Include="positioningBar.h" />
     <ClInclude Include="pusher.h" />

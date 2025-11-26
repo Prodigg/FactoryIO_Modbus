@@ -8,5 +8,5 @@ void FactoryIO::alarmSiren_t::setSireneState(bool state) {
 
 void FactoryIO::alarmSiren_t::updateFactoryIO() {
 	if (_sireneOnIndex != NO_MODBUS_ADDR)
-		_mb.modbus_write_coil(_sireneOnIndex, _sireneOn);
+		_mb.writeCoil(_sireneOnIndex, _sireneOn);
 }

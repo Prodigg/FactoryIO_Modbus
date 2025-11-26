@@ -1,5 +1,6 @@
 #pragma once
 #include "FactoryIOGeneral.h"
+#include "modbusProvider.h"
 
 namespace FactoryIO {
 	enum class lightArrayMode_t  {
@@ -11,7 +12,7 @@ namespace FactoryIO {
 	class lightArray_t {
 	public:
 		lightArray_t(
-			modbus& mb,
+			ModbusProvider_t& mb,
 			lightArrayMode_t mode,
 			modbusAddr_t valueAddr,
 			modbusAddr_t beam1Addr,
@@ -26,9 +27,9 @@ namespace FactoryIO {
 			modbusAddr_t analogInput,
 			uint16_t scaleFactor);
 
-		static lightArray_t constructNumerical(modbus& mb, modbusAddr_t valueAddr);
+		static lightArray_t constructNumerical(ModbusProvider_t& mb, modbusAddr_t valueAddr);
 		static lightArray_t constructDigital(
-			modbus& mb,
+			ModbusProvider_t& mb,
 			modbusAddr_t beam1Addr,
 			modbusAddr_t beam2Addr,
 			modbusAddr_t beam3Addr,
@@ -38,7 +39,7 @@ namespace FactoryIO {
 			modbusAddr_t beam7Addr,
 			modbusAddr_t beam8Addr,
 			modbusAddr_t beam9Addr);
-		static lightArray_t constructAnalog(modbus& mb, modbusAddr_t analogInput, uint16_t scaleFactor);
+		static lightArray_t constructAnalog(ModbusProvider_t& mb, modbusAddr_t analogInput, uint16_t scaleFactor);
 
 		uint16_t getBitfieled();
 		bool isBeamInterupted();
@@ -46,7 +47,7 @@ namespace FactoryIO {
 		uint16_t getNumberOfBeamsInterupted();
 
 	private:
-		modbus& _mb;
+		ModbusProvider_t& _mb;
 		lightArrayMode_t _mode;
 		modbusAddr_t _valueAddr;
 		modbusAddr_t _beam1Addr;

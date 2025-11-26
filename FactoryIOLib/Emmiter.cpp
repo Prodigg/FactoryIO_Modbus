@@ -1,6 +1,6 @@
 #include "Emmiter.h"
 
-FactoryIO::emmiter_t::emmiter_t(modbus& mb, modbusAddr_t emmitAddr, modbusAddr_t partAddr, modbusAddr_t baseAddr) : 
+FactoryIO::emmiter_t::emmiter_t(ModbusProvider_t& mb, modbusAddr_t emmitAddr, modbusAddr_t partAddr, modbusAddr_t baseAddr) : 
 	_mb(mb), 
 	_emmitAddr(emmitAddr), 
 	_partAddr(partAddr), 
@@ -31,9 +31,9 @@ void FactoryIO::emmiter_t::setBase(const std::vector<Bases_t> basesToEmmit) {
 
 void FactoryIO::emmiter_t::updateFactoryIO() {
 	if (_emmitAddr != NO_MODBUS_ADDR)
-		_mb.modbus_write_coil(_emmitAddr, _emmit);
+		_mb.writeCoil(_emmitAddr, _emmit);
 	if (_partAddr != NO_MODBUS_ADDR)
-		_mb.modbus_write_register(_partAddr, _part);
+		_mb.writeCoil(_partAddr, _part);
 	if (_baseAddr != NO_MODBUS_ADDR)
-		_mb.modbus_write_register(_baseAddr, _base);
+		_mb.writeCoil(_baseAddr, _base);
 }

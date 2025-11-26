@@ -2,14 +2,14 @@
 #include <stdexcept>
 #include <iostream>
 
-FactoryIO::encoder_t::encoder_t(modbus& _mb, modbusAddr_t signalA, modbusAddr_t signalB) :
+FactoryIO::encoder_t::encoder_t(ModbusProvider_t& _mb, modbusAddr_t signalA, modbusAddr_t signalB) :
 	encoder_t(_mb, signalA, signalB, true) { }
 
-FactoryIO::encoder_t::encoder_t(modbus& _mb, modbusAddr_t signalA, modbusAddr_t signalB, bool startThreadImmidiantly) : 
+FactoryIO::encoder_t::encoder_t(ModbusProvider_t& _mb, modbusAddr_t signalA, modbusAddr_t signalB, bool startThreadImmidiantly) : 
 	_signalAAddr(signalA),
 	_signalBAddr(signalB),
 	_mb(_mb),
-	_privateModbus(_mb) {
+	_privateModbus(_mb.getModbus()) {
 	_threadWait.store(!startThreadImmidiantly);
 	FactoryIO::internal::checkModbusAddr(signalA);
 	FactoryIO::internal::checkModbusAddr(signalB);

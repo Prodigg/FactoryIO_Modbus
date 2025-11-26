@@ -2,5 +2,5 @@
 
 void FactoryIO::rollerStop_t::setRollerState(bool state) {
 	FactoryIO::internal::checkModbusAddr(_rollerStopActiveAddr);
-	_mb.modbus_write_coil(_rollerStopActiveAddr, state);
+	_mb.writeCoil(_rollerStopActiveAddr, state);
 }

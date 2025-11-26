@@ -1,6 +1,6 @@
 #include "weelSorter.h"
 
-FactoryIO::weelSorter_t::weelSorter_t(modbus& mb, modbusAddr_t plusAddr, modbusAddr_t minusAddr, modbusAddr_t leftAddr, modbusAddr_t rightAddr) :
+FactoryIO::weelSorter_t::weelSorter_t(ModbusProvider_t& mb, modbusAddr_t plusAddr, modbusAddr_t minusAddr, modbusAddr_t leftAddr, modbusAddr_t rightAddr) :
 	_mb(mb),
 	_plusAddr(plusAddr),
 	_minusAddr(minusAddr),
@@ -11,58 +11,58 @@ FactoryIO::weelSorter_t::weelSorter_t(modbus& mb, modbusAddr_t plusAddr, modbusA
 
 void FactoryIO::weelSorter_t::moveForward() {
 	if (_plusAddr != NO_MODBUS_ADDR)
-		_mb.modbus_write_coil(_plusAddr, true);
+		_mb.writeCoil(_plusAddr, true);
 	if (_minusAddr != NO_MODBUS_ADDR)
-		_mb.modbus_write_coil(_minusAddr, false);
+		_mb.writeCoil(_minusAddr, false);
 	if (_leftAddr != NO_MODBUS_ADDR)
-		_mb.modbus_write_coil(_leftAddr, false);
+		_mb.writeCoil(_leftAddr, false);
 	if (_rightAddr != NO_MODBUS_ADDR)
-		_mb.modbus_write_coil(_rightAddr, false);
+		_mb.writeCoil(_rightAddr, false);
 }
 
 void FactoryIO::weelSorter_t::moveLeft() {
 	internal::checkModbusAddr(_leftAddr);
 	if (_plusAddr != NO_MODBUS_ADDR)
-		_mb.modbus_write_coil(_plusAddr, true);
+		_mb.writeCoil(_plusAddr, true);
 	if (_minusAddr != NO_MODBUS_ADDR)
-		_mb.modbus_write_coil(_minusAddr, false);
+		_mb.writeCoil(_minusAddr, false);
 	if (_leftAddr != NO_MODBUS_ADDR)
-		_mb.modbus_write_coil(_leftAddr, true);
+		_mb.writeCoil(_leftAddr, true);
 	if (_rightAddr != NO_MODBUS_ADDR)
-		_mb.modbus_write_coil(_rightAddr, false);
+		_mb.writeCoil(_rightAddr, false);
 }
 
 void FactoryIO::weelSorter_t::moveRight() {
 	internal::checkModbusAddr(_rightAddr);
 	if (_plusAddr != NO_MODBUS_ADDR)
-		_mb.modbus_write_coil(_plusAddr, true);
+		_mb.writeCoil(_plusAddr, true);
 	if (_minusAddr != NO_MODBUS_ADDR)
-		_mb.modbus_write_coil(_minusAddr, false);
+		_mb.writeCoil(_minusAddr, false);
 	if (_leftAddr != NO_MODBUS_ADDR)
-		_mb.modbus_write_coil(_leftAddr, false);
+		_mb.writeCoil(_leftAddr, false);
 	if (_rightAddr != NO_MODBUS_ADDR)
-		_mb.modbus_write_coil(_rightAddr, true);
+		_mb.writeCoil(_rightAddr, true);
 }
 
 void FactoryIO::weelSorter_t::moveBackward() {
 	internal::checkModbusAddr(_minusAddr);
 	if (_plusAddr != NO_MODBUS_ADDR)
-		_mb.modbus_write_coil(_plusAddr, false);
+		_mb.writeCoil(_plusAddr, false);
 	if (_minusAddr != NO_MODBUS_ADDR)
-		_mb.modbus_write_coil(_minusAddr, true);
+		_mb.writeCoil(_minusAddr, true);
 	if (_leftAddr != NO_MODBUS_ADDR)
-		_mb.modbus_write_coil(_leftAddr, false);
+		_mb.writeCoil(_leftAddr, false);
 	if (_rightAddr != NO_MODBUS_ADDR)
-		_mb.modbus_write_coil(_rightAddr, false);
+		_mb.writeCoil(_rightAddr, false);
 }
 
 void FactoryIO::weelSorter_t::stop() {
 	if (_plusAddr != NO_MODBUS_ADDR) 
-		_mb.modbus_write_coil(_plusAddr, false);
+		_mb.writeCoil(_plusAddr, false);
 	if (_minusAddr != NO_MODBUS_ADDR)
-		_mb.modbus_write_coil(_minusAddr, false);
+		_mb.writeCoil(_minusAddr, false);
 	if (_leftAddr != NO_MODBUS_ADDR)
-		_mb.modbus_write_coil(_leftAddr, false);
+		_mb.writeCoil(_leftAddr, false);
 	if (_rightAddr != NO_MODBUS_ADDR)
-		_mb.modbus_write_coil(_rightAddr, false);
+		_mb.writeCoil(_rightAddr, false);
 }

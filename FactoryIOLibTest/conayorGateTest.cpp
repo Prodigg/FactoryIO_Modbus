@@ -11,7 +11,7 @@ using namespace FactoryIO::internal::testing;
 namespace _1FactoryIOLibTest_module {
 	TEST_CLASS(convayorGate) {
 		TEST_METHOD(exceptions) {
-			modbus mb = modbus("127.0.0.1", 502);
+			FactoryIO::ModbusProvider_t mb("127.0.0.1", 502, 1);
 			
 			Assert::ExpectException<std::runtime_error, std::function<void(void)>>(
 				[&](void) -> void {
@@ -19,8 +19,6 @@ namespace _1FactoryIOLibTest_module {
 					gate.isGateOpend();
 				}, L"No exception when isGateOpen is called and no Modbus Address was provided for opend"
 			);
-
-			mb.modbus_close();
 		}
 	};
 }

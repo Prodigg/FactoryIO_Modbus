@@ -1,5 +1,6 @@
 #pragma once
 #include "FactoryIOGeneral.h"
+#include "modbusProvider.h"
 
 namespace FactoryIO {
 
@@ -11,7 +12,7 @@ namespace FactoryIO {
 
 	class Convayor_t {
 	public:
-		Convayor_t(modbus& mb, modbusAddr_t digital, modbusAddr_t digitalPlus, modbusAddr_t digitalMinus, modbusAddr_t analog, ConvayorMode_t mode, uint16_t scaleFactor);
+		Convayor_t(ModbusProvider_t& mb, modbusAddr_t digital, modbusAddr_t digitalPlus, modbusAddr_t digitalMinus, modbusAddr_t analog, ConvayorMode_t mode, uint16_t scaleFactor);
 
 		void move(bool move);
 		void moveDirection(bool reverse);
@@ -19,7 +20,7 @@ namespace FactoryIO {
 		void stop();
 
 	protected:
-		modbus& mb;
+		ModbusProvider_t& mb;
 	private:
 		modbusAddr_t _digitalAddr;
 		modbusAddr_t _digitalPlusAddr;

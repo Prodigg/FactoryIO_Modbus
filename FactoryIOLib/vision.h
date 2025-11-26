@@ -1,5 +1,6 @@
 #pragma once
 #include "FactoryIOGeneral.h"
+#include "modbusProvider.h"
 
 namespace FactoryIO {
 	enum class visionMode_t {
@@ -13,7 +14,7 @@ namespace FactoryIO {
 	
 	class vision_t {
 	public:
-		vision_t(modbus& mb,
+		vision_t(ModbusProvider_t& mb,
 			visionMode_t mode,
 			modbusAddr_t singleDetectionAddr,
 			modbusAddr_t bit0Addr,
@@ -23,17 +24,17 @@ namespace FactoryIO {
 			modbusAddr_t bitfieldAddr,
 			modbusAddr_t IDAddr);
 
-		static vision_t constructDetectBase(modbus& mb, modbusAddr_t singleDetectionAddr);
-		static vision_t constructDetectLid(modbus& mb, modbusAddr_t singleDetectionAddr);
-		static vision_t constructDetectRaw(modbus& mb, modbusAddr_t singleDetectionAddr);
+		static vision_t constructDetectBase(ModbusProvider_t& mb, modbusAddr_t singleDetectionAddr);
+		static vision_t constructDetectLid(ModbusProvider_t& mb, modbusAddr_t singleDetectionAddr);
+		static vision_t constructDetectRaw(ModbusProvider_t& mb, modbusAddr_t singleDetectionAddr);
 		static vision_t constructDetectAllDigital(
-			modbus& mb, 
+			ModbusProvider_t& mb, 
 			modbusAddr_t bit0Addr,
 			modbusAddr_t bit1Addr,
 			modbusAddr_t bit2Addr,
 			modbusAddr_t bit3Addr);
-		static vision_t constructDetectNumerical(modbus& mb, modbusAddr_t bitfieldAddr);
-		static vision_t constructDetectID(modbus& mb, modbusAddr_t IDAddr);
+		static vision_t constructDetectNumerical(ModbusProvider_t& mb, modbusAddr_t bitfieldAddr);
+		static vision_t constructDetectID(ModbusProvider_t& mb, modbusAddr_t IDAddr);
 
 		bool isPartPresent();
 		bool isLidPresent();
@@ -44,7 +45,7 @@ namespace FactoryIO {
 		Parts_t getDetectedPart();
 
 	private:
-		modbus& _mb;
+		ModbusProvider_t& _mb;
 		visionMode_t _mode;
 
 		modbusAddr_t _singleDetectionAddr;

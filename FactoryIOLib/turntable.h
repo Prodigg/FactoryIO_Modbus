@@ -1,5 +1,6 @@
 #pragma once
 #include "FactoryIOGeneral.h"
+#include "modbusProvider.h"
 namespace FactoryIO {
 	enum class turntableMode_t {
 		MONOSTABLE = 0,
@@ -8,7 +9,7 @@ namespace FactoryIO {
 
 	class turntable_t {
 	public:
-		turntable_t(modbus& mb,
+		turntable_t(ModbusProvider_t& mb,
 			modbusAddr_t rollPlus,
 			modbusAddr_t rollMinus,
 			modbusAddr_t frontLimit,
@@ -46,7 +47,7 @@ namespace FactoryIO {
 			TRANSFER
 		};
 
-		modbus& _mb;
+		ModbusProvider_t& _mb;
 		modbusAddr_t _rollPlusIndex;
 		modbusAddr_t _rollMinusIndex;
 		modbusAddr_t _frontLimitIndex;

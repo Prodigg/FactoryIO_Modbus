@@ -1,5 +1,6 @@
 #pragma once
 #include "FactoryIOGeneral.h"
+#include "modbusProvider.h"
 #include <functional>
 #include <optional>
 
@@ -19,7 +20,7 @@ namespace FactoryIO {
 	class pusher_t {
 	public:
 		pusher_t(
-			modbus& mb, 
+			ModbusProvider_t& mb, 
 			pusherMode_t mode, 
 			modbusAddr_t pusherAddr, 
 			modbusAddr_t frontLimitAddr, 
@@ -30,10 +31,10 @@ namespace FactoryIO {
 			modbusAddr_t pusherPositionAddr, 
 			uint16_t scaleFactor);
 
-		static pusher_t constructMonostable(modbus& mb, modbusAddr_t pusherAddr, modbusAddr_t frontLimitAddr, modbusAddr_t backLimitAddr);
-		static pusher_t constructBistable(modbus& mb, modbusAddr_t pusherPlusAddr, modbusAddr_t pusherMinusAddr, modbusAddr_t frontLimitAddr, modbusAddr_t backLimitAddr);
-		static pusher_t constructAnalog(modbus& mb, modbusAddr_t pusherSetpointAddr, modbusAddr_t pusherPositionAddr, uint16_t scalefactor);
-		static pusher_t constructAnalogDigital(modbus& mb, modbusAddr_t pusherSetpointAddr, modbusAddr_t pusherPositionAddr, modbusAddr_t frontLimitAddr, modbusAddr_t backLimitAddr, uint16_t scalefactor);
+		static pusher_t constructMonostable(ModbusProvider_t& mb, modbusAddr_t pusherAddr, modbusAddr_t frontLimitAddr, modbusAddr_t backLimitAddr);
+		static pusher_t constructBistable(ModbusProvider_t& mb, modbusAddr_t pusherPlusAddr, modbusAddr_t pusherMinusAddr, modbusAddr_t frontLimitAddr, modbusAddr_t backLimitAddr);
+		static pusher_t constructAnalog(ModbusProvider_t& mb, modbusAddr_t pusherSetpointAddr, modbusAddr_t pusherPositionAddr, uint16_t scalefactor);
+		static pusher_t constructAnalogDigital(ModbusProvider_t& mb, modbusAddr_t pusherSetpointAddr, modbusAddr_t pusherPositionAddr, modbusAddr_t frontLimitAddr, modbusAddr_t backLimitAddr, uint16_t scalefactor);
 
 		void push(bool forward);
 		bool isAtFront();
@@ -67,6 +68,6 @@ namespace FactoryIO {
 
 		uint16_t _scaleFactor;
 
-		modbus& _mb;
+		ModbusProvider_t& _mb;
 	};
 }

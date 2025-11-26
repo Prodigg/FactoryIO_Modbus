@@ -12,11 +12,8 @@ using namespace FactoryIO::internal::testing;
 namespace _1FactoryIOLibTest_module {
 	TEST_CLASS(alarmSirene) {
 	TEST_METHOD(turnOnOff) {
-		modbus mb = modbus("127.0.0.1", 502);
-		mb.modbus_set_slave_id(1);
-		if (!mb.modbus_connect()) {
-			Assert::Fail(L"Couldn't connect to FactoryIO");
-		}
+		FactoryIO::ModbusProvider_t mb("127.0.0.1", 502, 1);
+		
 		FactoryIO::alarmSiren_t alarmSirene(mb, 0);
 		bool ModbusServerSireneOn = false;
 
@@ -26,7 +23,7 @@ namespace _1FactoryIOLibTest_module {
 
 		std::this_thread::sleep_for(std::chrono::milliseconds(20));
 
-		mb.modbus_read_coils(0, 1, &ModbusServerSireneOn);
+		mb.getModbus().modbus_read_coils(0, 1, &ModbusServerSireneOn);
 		Assert::AreEqual(true, ModbusServerSireneOn, L"sirene didn't turn on");
 
 		///// check if sirene turnes off
@@ -35,34 +32,24 @@ namespace _1FactoryIOLibTest_module {
 
 		std::this_thread::sleep_for(std::chrono::milliseconds(20));
 
-		mb.modbus_read_coils(0, 1, &ModbusServerSireneOn);
+		mb.getModbus().modbus_read_coils(0, 1, &ModbusServerSireneOn);
 		Assert::AreEqual(false, ModbusServerSireneOn, L"sirene didn't turn off");
-		mb.modbus_close();
 	}
 
 	TEST_METHOD(noAddress) {
-		modbus mb = modbus("127.0.0.1", 502);
-		mb.modbus_set_slave_id(1);
-		if (!mb.modbus_connect()) {
-			Assert::Fail(L"Couldn't connect to FactoryIO");
-		}
-
+		FactoryIO::ModbusProvider_t mb("127.0.0.1", 502, 1);
+		
 		FactoryIO::alarmSiren_t alarmSirene(mb, FactoryIO::NO_MODBUS_ADDR);
 		Assert::ExpectException<std::runtime_error, std::function<void(void)>>([&]() {
 			alarmSirene.setSireneState(true);
 			}, L"setSireneState did not rase a exception when no valid modbus addr is provided.");
-
-		mb.modbus_close();
 	}
 	};
 
 	TEST_CLASS(warningLight) {
 		TEST_METHOD(turnOnOff) {
-			modbus mb = modbus("127.0.0.1", 502);
-			mb.modbus_set_slave_id(1);
-			if (!mb.modbus_connect()) {
-				Assert::Fail(L"Couldn't connect to FactoryIO");
-			}
+			FactoryIO::ModbusProvider_t mb("127.0.0.1", 502, 1);
+
 			FactoryIO::WarningLight_t warningLight(mb, 1);
 			bool ModbusServerLightOn = false;
 
@@ -72,7 +59,7 @@ namespace _1FactoryIOLibTest_module {
 
 			std::this_thread::sleep_for(std::chrono::milliseconds(20));
 
-			mb.modbus_read_coils(1, 1, &ModbusServerLightOn);
+			mb.getModbus().modbus_read_coils(1, 1, &ModbusServerLightOn);
 			Assert::AreEqual(true, ModbusServerLightOn, L"sirene didn't turn on");
 
 			///// check if light turnes off
@@ -81,35 +68,25 @@ namespace _1FactoryIOLibTest_module {
 
 			std::this_thread::sleep_for(std::chrono::milliseconds(20));
 
-			mb.modbus_read_coils(0, 1, &ModbusServerLightOn);
+			mb.getModbus().modbus_read_coils(0, 1, &ModbusServerLightOn);
 			Assert::AreEqual(false, ModbusServerLightOn, L"sirene didn't turn off");
-			mb.modbus_close();
-			
 		}
 
 		TEST_METHOD(noAddress) {
-			modbus mb = modbus("127.0.0.1", 502);
-			mb.modbus_set_slave_id(1);
-			if (!mb.modbus_connect()) {
-				Assert::Fail(L"Couldn't connect to FactoryIO");
-			}
+			FactoryIO::ModbusProvider_t mb("127.0.0.1", 502, 1);
 
 			FactoryIO::WarningLight_t warningLight(mb, FactoryIO::NO_MODBUS_ADDR);
 			Assert::ExpectException<std::runtime_error, std::function<void(void)>>([&]() {
 				warningLight.setLightState(true);
 				}, L"setSireneState did not rase a exception when no valid modbus addr is provided.");
 
-			mb.modbus_close();
 		}
 	};
 
 	TEST_CLASS(stackLight) {
 		TEST_METHOD(greenLight) {
-			modbus mb = modbus("127.0.0.1", 502);
-			mb.modbus_set_slave_id(1);
-			if (!mb.modbus_connect()) {
-				Assert::Fail(L"Couldn't connect to FactoryIO");
-			}
+			FactoryIO::ModbusProvider_t mb("127.0.0.1", 502, 1);
+
 			FactoryIO::StackLight_t stackLight(mb, 2, 3, 4);
 
 			///// check if green light turnes on
@@ -118,9 +95,9 @@ namespace _1FactoryIOLibTest_module {
 
 			std::this_thread::sleep_for(std::chrono::milliseconds(20));
 		
-			Assert::AreEqual(true, getModbusCoilState(2, mb), L"green light didn't turn on");
-			Assert::AreEqual(false, getModbusCoilState(3, mb), L"orange light turned on");
-			Assert::AreEqual(false, getModbusCoilState(4, mb), L"red light turned on");
+			Assert::AreEqual(true, getModbusCoilState(2, mb.getModbus()), L"green light didn't turn on");
+			Assert::AreEqual(false, getModbusCoilState(3, mb.getModbus()), L"orange light turned on");
+			Assert::AreEqual(false, getModbusCoilState(4, mb.getModbus()), L"red light turned on");
 
 			///// check if light turnes off
 
@@ -128,20 +105,15 @@ namespace _1FactoryIOLibTest_module {
 
 			std::this_thread::sleep_for(std::chrono::milliseconds(20));
 
-			Assert::AreEqual(false, getModbusCoilState(2, mb), L"green light didn't turn off");
-			Assert::AreEqual(false, getModbusCoilState(3, mb), L"orange light turned on");
-			Assert::AreEqual(false, getModbusCoilState(4, mb), L"red light turned on");
-
-			mb.modbus_close();
+			Assert::AreEqual(false, getModbusCoilState(2, mb.getModbus()), L"green light didn't turn off");
+			Assert::AreEqual(false, getModbusCoilState(3, mb.getModbus()), L"orange light turned on");
+			Assert::AreEqual(false, getModbusCoilState(4, mb.getModbus()), L"red light turned on");
 
 		}
 
 		TEST_METHOD(orangeLight) {
-			modbus mb = modbus("127.0.0.1", 502);
-			mb.modbus_set_slave_id(1);
-			if (!mb.modbus_connect()) {
-				Assert::Fail(L"Couldn't connect to FactoryIO");
-			}
+			FactoryIO::ModbusProvider_t mb("127.0.0.1", 502, 1);
+
 			FactoryIO::StackLight_t stackLight(mb, 2, 3, 4);
 
 			///// check if green light turnes on
@@ -150,9 +122,9 @@ namespace _1FactoryIOLibTest_module {
 
 			std::this_thread::sleep_for(std::chrono::milliseconds(20));
 
-			Assert::AreEqual(false, getModbusCoilState(2, mb), L"green light turned on");
-			Assert::AreEqual(true, getModbusCoilState(3, mb), L"orange light didn't turn on");
-			Assert::AreEqual(false, getModbusCoilState(4, mb), L"red light turned on");
+			Assert::AreEqual(false, getModbusCoilState(2, mb.getModbus()), L"green light turned on");
+			Assert::AreEqual(true, getModbusCoilState(3, mb.getModbus()), L"orange light didn't turn on");
+			Assert::AreEqual(false, getModbusCoilState(4, mb.getModbus()), L"red light turned on");
 
 			///// check if light turnes off
 
@@ -160,20 +132,15 @@ namespace _1FactoryIOLibTest_module {
 
 			std::this_thread::sleep_for(std::chrono::milliseconds(20));
 
-			Assert::AreEqual(false, getModbusCoilState(2, mb), L"green light turned on");
-			Assert::AreEqual(false, getModbusCoilState(3, mb), L"orange light didn't turn off");
-			Assert::AreEqual(false, getModbusCoilState(4, mb), L"red light turned on");
-
-			mb.modbus_close();
+			Assert::AreEqual(false, getModbusCoilState(2, mb.getModbus()), L"green light turned on");
+			Assert::AreEqual(false, getModbusCoilState(3, mb.getModbus()), L"orange light didn't turn off");
+			Assert::AreEqual(false, getModbusCoilState(4, mb.getModbus()), L"red light turned on");
 
 		}
 
 		TEST_METHOD(RedLight) {
-			modbus mb = modbus("127.0.0.1", 502);
-			mb.modbus_set_slave_id(1);
-			if (!mb.modbus_connect()) {
-				Assert::Fail(L"Couldn't connect to FactoryIO");
-			}
+			FactoryIO::ModbusProvider_t mb("127.0.0.1", 502, 1);
+
 			FactoryIO::StackLight_t stackLight(mb, 2, 3, 4);
 
 			///// check if green light turnes on
@@ -182,9 +149,9 @@ namespace _1FactoryIOLibTest_module {
 
 			std::this_thread::sleep_for(std::chrono::milliseconds(20));
 
-			Assert::AreEqual(false, getModbusCoilState(2, mb), L"green light turned on");
-			Assert::AreEqual(false, getModbusCoilState(3, mb), L"orange light turned on");
-			Assert::AreEqual(true, getModbusCoilState(4, mb), L"red light didn't turn on");
+			Assert::AreEqual(false, getModbusCoilState(2, mb.getModbus()), L"green light turned on");
+			Assert::AreEqual(false, getModbusCoilState(3, mb.getModbus()), L"orange light turned on");
+			Assert::AreEqual(true, getModbusCoilState(4, mb.getModbus()), L"red light didn't turn on");
 
 			///// check if light turnes off
 
@@ -192,20 +159,14 @@ namespace _1FactoryIOLibTest_module {
 
 			std::this_thread::sleep_for(std::chrono::milliseconds(20));
 
-			Assert::AreEqual(false, getModbusCoilState(2, mb), L"green light turned on");
-			Assert::AreEqual(false, getModbusCoilState(3, mb), L"orange light turned on");
-			Assert::AreEqual(false, getModbusCoilState(4, mb), L"red light didn't turn off");
-
-			mb.modbus_close();
+			Assert::AreEqual(false, getModbusCoilState(2, mb.getModbus()), L"green light turned on");
+			Assert::AreEqual(false, getModbusCoilState(3, mb.getModbus()), L"orange light turned on");
+			Assert::AreEqual(false, getModbusCoilState(4, mb.getModbus()), L"red light didn't turn off");
 
 		}
 
 		TEST_METHOD(noAddress) {
-			modbus mb = modbus("127.0.0.1", 502);
-			mb.modbus_set_slave_id(1);
-			if (!mb.modbus_connect()) {
-				Assert::Fail(L"Couldn't connect to FactoryIO");
-			}
+			FactoryIO::ModbusProvider_t mb("127.0.0.1", 502, 1);
 
 			FactoryIO::StackLight_t stackLight(mb, FactoryIO::NO_MODBUS_ADDR, FactoryIO::NO_MODBUS_ADDR, FactoryIO::NO_MODBUS_ADDR);
 			Assert::ExpectException<std::runtime_error, std::function<void(void)>>([&]() {
@@ -220,89 +181,74 @@ namespace _1FactoryIOLibTest_module {
 				stackLight.setRedLight(true);
 				}, L"setSireneState did not rase a exception when no valid modbus addr is provided.");
 
-			mb.modbus_close();
 		}
 	};
 
 	TEST_CLASS(emmiter) {
 		TEST_METHOD(emmitState) {
-			modbus mb = modbus("127.0.0.1", 502);
-			mb.modbus_set_slave_id(1);
-			if (!mb.modbus_connect()) {
-				Assert::Fail(L"Couldn't connect to FactoryIO");
-			}
+			FactoryIO::ModbusProvider_t mb("127.0.0.1", 502, 1);
 
 			FactoryIO::emmiter_t emmiter(mb, 5, 1, 0);
 
 			emmiter.emmit(true);
 			std::this_thread::sleep_for(std::chrono::milliseconds(20));
-			Assert::AreEqual(true, getModbusCoilState(5, mb), L"emmit didn't turn on");
+			Assert::AreEqual(true, getModbusCoilState(5, mb.getModbus()), L"emmit didn't turn on");
 
 			emmiter.emmit(false);
 			std::this_thread::sleep_for(std::chrono::milliseconds(20));
-			Assert::AreEqual(false, getModbusCoilState(5, mb), L"emmit didn't turn off");
+			Assert::AreEqual(false, getModbusCoilState(5, mb.getModbus()), L"emmit didn't turn off");
 
-			mb.modbus_close();
 		}
 
 		TEST_METHOD(emmitBase) {
-			modbus mb = modbus("127.0.0.1", 502);
-			mb.modbus_set_slave_id(1);
-			if (!mb.modbus_connect()) {
-				Assert::Fail(L"Couldn't connect to FactoryIO");
-			}
+			FactoryIO::ModbusProvider_t mb("127.0.0.1", 502, 1);
 
 			FactoryIO::emmiter_t emmiter(mb, 5, 1, 0);
 
 			emmiter.emmit(true);
 			emmiter.setBase({ FactoryIO::Bases_t::PALLET });
 			std::this_thread::sleep_for(std::chrono::milliseconds(20));
-			Assert::AreEqual(true, getModbusCoilState(5, mb), L"emmit didn't turn on");
-			Assert::AreEqual((uint16_t)0b00000000000000001, getModbusRegState(0, mb), L"Pallet bit didn't turn on");
+			Assert::AreEqual(true, getModbusCoilState(5, mb.getModbus()), L"emmit didn't turn on");
+			Assert::AreEqual((uint16_t)0b00000000000000001, getModbusRegState(0, mb.getModbus()), L"Pallet bit didn't turn on");
 
 			emmiter.setBase({ FactoryIO::Bases_t::PALLET, FactoryIO::Bases_t::SQARE_PALLET });
 			std::this_thread::sleep_for(std::chrono::milliseconds(20));
-			Assert::AreEqual((uint16_t)0b00000000000000011, getModbusRegState(0, mb), L"emmiter base missmatch");
+			Assert::AreEqual((uint16_t)0b00000000000000011, getModbusRegState(0, mb.getModbus()), L"emmiter base missmatch");
 
 			emmiter.setBase({ FactoryIO::Bases_t::PALLET, FactoryIO::Bases_t::SQARE_PALLET, FactoryIO::Bases_t::STACKABLE_BOX });
 			std::this_thread::sleep_for(std::chrono::milliseconds(20));
-			Assert::AreEqual((uint16_t)0b00000000000000111, getModbusRegState(0, mb), L"emmiter base missmatch");
+			Assert::AreEqual((uint16_t)0b00000000000000111, getModbusRegState(0, mb.getModbus()), L"emmiter base missmatch");
 
 			emmiter.setBase({ FactoryIO::Bases_t::NO_BASE });
 			std::this_thread::sleep_for(std::chrono::milliseconds(20));
-			Assert::AreEqual((uint16_t)0b00000000000000000, getModbusRegState(0, mb), L"emmiter base didn't clear");
+			Assert::AreEqual((uint16_t)0b00000000000000000, getModbusRegState(0, mb.getModbus()), L"emmiter base didn't clear");
 
 			emmiter.emmit(false);
-			mb.modbus_close();
 		}
 
 		TEST_METHOD(emmitPart) {
 			using namespace FactoryIO;
-			modbus mb = modbus("127.0.0.1", 502);
-			mb.modbus_set_slave_id(1);
-			if (!mb.modbus_connect()) {
-				Assert::Fail(L"Couldn't connect to FactoryIO");
-			}
+			ModbusProvider_t mb("127.0.0.1", 502, 1);
 
 			FactoryIO::emmiter_t emmiter(mb, 5, 1, 0);
 
 			emmiter.emmit(true);
 			emmiter.setParts({ Parts_t::SMALL_BOX });
 			std::this_thread::sleep_for(std::chrono::milliseconds(20));
-			Assert::AreEqual(true, getModbusCoilState(5, mb), L"emmit didn't turn on");
-			Assert::AreEqual((uint16_t)0b00000000000000001, getModbusRegState(1, mb), L"emmiter part missmatch");
+			Assert::AreEqual(true, getModbusCoilState(5, mb.getModbus()), L"emmit didn't turn on");
+			Assert::AreEqual((uint16_t)0b00000000000000001, getModbusRegState(1, mb.getModbus()), L"emmiter part missmatch");
 
 			emmiter.setParts({ FactoryIO::Parts_t::SMALL_BOX, Parts_t::MEDIUM_BOX });
 			std::this_thread::sleep_for(std::chrono::milliseconds(20));
-			Assert::AreEqual((uint16_t)0b00000000000000011, getModbusRegState(1, mb), L"emmiter part missmatch");
+			Assert::AreEqual((uint16_t)0b00000000000000011, getModbusRegState(1, mb.getModbus()), L"emmiter part missmatch");
 
 			emmiter.setParts({ FactoryIO::Parts_t::SMALL_BOX, Parts_t::MEDIUM_BOX, Parts_t::LARGE_BOX });
 			std::this_thread::sleep_for(std::chrono::milliseconds(20));
-			Assert::AreEqual((uint16_t)0b00000000000000111, getModbusRegState(1, mb), L"emmiter part missmatch");
+			Assert::AreEqual((uint16_t)0b00000000000000111, getModbusRegState(1, mb.getModbus()), L"emmiter part missmatch");
 
 			emmiter.setParts({ FactoryIO::Parts_t::SMALL_BOX, Parts_t::MEDIUM_BOX, Parts_t::LARGE_BOX, Parts_t::PALLETIZING_BOX });
 			std::this_thread::sleep_for(std::chrono::milliseconds(20));
-			Assert::AreEqual((uint16_t)0b00000000000001111, getModbusRegState(1, mb), L"emmiter part missmatch");
+			Assert::AreEqual((uint16_t)0b00000000000001111, getModbusRegState(1, mb.getModbus()), L"emmiter part missmatch");
 
 			emmiter.setParts({ FactoryIO::Parts_t::SMALL_BOX, 
 				Parts_t::MEDIUM_BOX, 
@@ -311,7 +257,7 @@ namespace _1FactoryIOLibTest_module {
 				Parts_t::BLUE_RAW_MATERIAL 
 				});
 			std::this_thread::sleep_for(std::chrono::milliseconds(20));
-			Assert::AreEqual((uint16_t)0b00000000000011111, getModbusRegState(1, mb), L"emmiter part missmatch");
+			Assert::AreEqual((uint16_t)0b00000000000011111, getModbusRegState(1, mb.getModbus()), L"emmiter part missmatch");
 
 			emmiter.setParts({ FactoryIO::Parts_t::SMALL_BOX,
 				Parts_t::MEDIUM_BOX,
@@ -321,7 +267,7 @@ namespace _1FactoryIOLibTest_module {
 				Parts_t::GREEN_RAW_MATERIAL
 				});
 			std::this_thread::sleep_for(std::chrono::milliseconds(20));
-			Assert::AreEqual((uint16_t)0b00000000000111111, getModbusRegState(1, mb), L"emmiter part missmatch");
+			Assert::AreEqual((uint16_t)0b00000000000111111, getModbusRegState(1, mb.getModbus()), L"emmiter part missmatch");
 
 			emmiter.setParts({ FactoryIO::Parts_t::SMALL_BOX,
 				Parts_t::MEDIUM_BOX,
@@ -332,7 +278,7 @@ namespace _1FactoryIOLibTest_module {
 				Parts_t::METTAL_RAW_MATERIAL
 				});
 			std::this_thread::sleep_for(std::chrono::milliseconds(20));
-			Assert::AreEqual((uint16_t)0b00000000001111111, getModbusRegState(1, mb), L"emmiter part missmatch");
+			Assert::AreEqual((uint16_t)0b00000000001111111, getModbusRegState(1, mb.getModbus()), L"emmiter part missmatch");
 
 			emmiter.setParts({ FactoryIO::Parts_t::SMALL_BOX,
 				Parts_t::MEDIUM_BOX,
@@ -344,7 +290,7 @@ namespace _1FactoryIOLibTest_module {
 				Parts_t::BLUE_PRODUCT_BASE
 				});
 			std::this_thread::sleep_for(std::chrono::milliseconds(20));
-			Assert::AreEqual((uint16_t)0b00000000011111111, getModbusRegState(1, mb), L"emmiter part missmatch");
+			Assert::AreEqual((uint16_t)0b00000000011111111, getModbusRegState(1, mb.getModbus()), L"emmiter part missmatch");
 
 			emmiter.setParts({ FactoryIO::Parts_t::SMALL_BOX,
 				Parts_t::MEDIUM_BOX,
@@ -357,7 +303,7 @@ namespace _1FactoryIOLibTest_module {
 				Parts_t::GREEN_PRODUCT_BASE
 				});
 			std::this_thread::sleep_for(std::chrono::milliseconds(20));
-			Assert::AreEqual((uint16_t)0b00000000111111111, getModbusRegState(1, mb), L"emmiter part missmatch");
+			Assert::AreEqual((uint16_t)0b00000000111111111, getModbusRegState(1, mb.getModbus()), L"emmiter part missmatch");
 
 			emmiter.setParts({ FactoryIO::Parts_t::SMALL_BOX,
 				Parts_t::MEDIUM_BOX,
@@ -371,7 +317,7 @@ namespace _1FactoryIOLibTest_module {
 				Parts_t::METTAL_PRODUCT_BASE
 				});
 			std::this_thread::sleep_for(std::chrono::milliseconds(20));
-			Assert::AreEqual((uint16_t)0b00000001111111111, getModbusRegState(1, mb), L"emmiter part missmatch");
+			Assert::AreEqual((uint16_t)0b00000001111111111, getModbusRegState(1, mb.getModbus()), L"emmiter part missmatch");
 
 			emmiter.setParts({ FactoryIO::Parts_t::SMALL_BOX,
 				Parts_t::MEDIUM_BOX,
@@ -386,7 +332,7 @@ namespace _1FactoryIOLibTest_module {
 				Parts_t::BLUE_PRODUCT_LID
 				});
 			std::this_thread::sleep_for(std::chrono::milliseconds(20));
-			Assert::AreEqual((uint16_t)0b00000011111111111, getModbusRegState(1, mb), L"emmiter part missmatch");
+			Assert::AreEqual((uint16_t)0b00000011111111111, getModbusRegState(1, mb.getModbus()), L"emmiter part missmatch");
 
 			emmiter.setParts({ FactoryIO::Parts_t::SMALL_BOX,
 				Parts_t::MEDIUM_BOX,
@@ -402,7 +348,7 @@ namespace _1FactoryIOLibTest_module {
 				Parts_t::GREEN_PRODUCT_LID
 				});
 			std::this_thread::sleep_for(std::chrono::milliseconds(20));
-			Assert::AreEqual((uint16_t)0b00000111111111111, getModbusRegState(1, mb), L"emmiter part missmatch");
+			Assert::AreEqual((uint16_t)0b00000111111111111, getModbusRegState(1, mb.getModbus()), L"emmiter part missmatch");
 
 			emmiter.setParts({ FactoryIO::Parts_t::SMALL_BOX,
 				Parts_t::MEDIUM_BOX,
@@ -419,7 +365,7 @@ namespace _1FactoryIOLibTest_module {
 				Parts_t::METTAL_PRODUCT_LID
 				});
 			std::this_thread::sleep_for(std::chrono::milliseconds(20));
-			Assert::AreEqual((uint16_t)0b00001111111111111, getModbusRegState(1, mb), L"emmiter part missmatch");
+			Assert::AreEqual((uint16_t)0b00001111111111111, getModbusRegState(1, mb.getModbus()), L"emmiter part missmatch");
 
 			emmiter.setParts({ FactoryIO::Parts_t::SMALL_BOX,
 				Parts_t::MEDIUM_BOX,
@@ -437,18 +383,13 @@ namespace _1FactoryIOLibTest_module {
 				Parts_t::STACKABLE_BOX
 				});
 			std::this_thread::sleep_for(std::chrono::milliseconds(20));
-			Assert::AreEqual((uint16_t)0b00011111111111111, getModbusRegState(1, mb), L"emmiter part missmatch");
+			Assert::AreEqual((uint16_t)0b00011111111111111, getModbusRegState(1, mb.getModbus()), L"emmiter part missmatch");
 
 			emmiter.emmit(false);
-			mb.modbus_close();
 		}
 
 		TEST_METHOD(noAddress) {
-			modbus mb = modbus("127.0.0.1", 502);
-			mb.modbus_set_slave_id(1);
-			if (!mb.modbus_connect()) {
-				Assert::Fail(L"Couldn't connect to FactoryIO");
-			}
+			FactoryIO::ModbusProvider_t mb("127.0.0.1", 502, 1);
 
 			FactoryIO::emmiter_t emmiter(mb, FactoryIO::NO_MODBUS_ADDR, FactoryIO::NO_MODBUS_ADDR, FactoryIO::NO_MODBUS_ADDR);
 			Assert::ExpectException<std::runtime_error, std::function<void(void)>>([&]() {
@@ -463,7 +404,6 @@ namespace _1FactoryIOLibTest_module {
 				emmiter.setParts({});
 				}, L"setParts did not rase a exception when no valid modbus addr is provided.");
 
-			mb.modbus_close();
 		}
 	};
 
@@ -487,11 +427,7 @@ namespace _1FactoryIOLibTest_module {
 
 	TEST_CLASS(remover) {
 		TEST_METHOD(toRemoveBase) {
-			modbus mb = modbus("127.0.0.1", 502);
-			mb.modbus_set_slave_id(1);
-			if (!mb.modbus_connect()) {
-				Assert::Fail(L"Couldn't connect to FactoryIO");
-			}
+			FactoryIO::ModbusProvider_t mb("127.0.0.1", 502, 1);
 
 			FactoryIO::remover_t remover(mb, 3, 2, 1, 0);
 
@@ -501,20 +437,15 @@ namespace _1FactoryIOLibTest_module {
 			for (uint16_t toTestBitfield = 0; toTestBitfield < 0b0000000000000111; toTestBitfield++) {
 				remover.setBasesToRemove(FactoryIO::internal::BitfieldEnumMapper_t::toBases(toTestBitfield));
 
-				mb.modbus_read_holding_registers(2, 1, &modbusReadValue);
+				mb.getModbus().modbus_read_holding_registers(2, 1, &modbusReadValue);
 				Assert::AreEqual((uint16_t)toTestBitfield, (uint16_t)modbusReadValue, L"bitfield doesn't match with expected bitfield.");
 			}
 
 			remover.setBasesToRemove({});
-			mb.modbus_close();
 		}
 
 		TEST_METHOD(toRemovePart) {
-			modbus mb = modbus("127.0.0.1", 502);
-			mb.modbus_set_slave_id(1);
-			if (!mb.modbus_connect()) {
-				Assert::Fail(L"Couldn't connect to FactoryIO");
-			}
+			FactoryIO::ModbusProvider_t mb("127.0.0.1", 502, 1);
 
 			FactoryIO::remover_t remover(mb, 3, 2, 1, 0);
 
@@ -524,19 +455,14 @@ namespace _1FactoryIOLibTest_module {
 			for (uint16_t toTestBitfield = 0; toTestBitfield < 0b0011111111111111; toTestBitfield++) {
 				remover.setPartsToRemove(FactoryIO::internal::BitfieldEnumMapper_t::toParts(toTestBitfield));
 
-				mb.modbus_read_holding_registers(3, 1, &modbusReadValue);
+				mb.getModbus().modbus_read_holding_registers(3, 1, &modbusReadValue);
 				Assert::AreEqual((uint16_t)toTestBitfield, (uint16_t)modbusReadValue, L"bitfield doesn't match with expected bitfield.");
 			}
 			remover.setPartsToRemove({});
-			mb.modbus_close();
 		}
 
 		TEST_METHOD(noAdress) {
-			modbus mb = modbus("127.0.0.1", 502);
-			mb.modbus_set_slave_id(1);
-			if (!mb.modbus_connect()) {
-				Assert::Fail(L"Couldn't connect to FactoryIO");
-			}
+			FactoryIO::ModbusProvider_t mb("127.0.0.1", 502, 1);
 
 			FactoryIO::remover_t remover(mb, FactoryIO::NO_MODBUS_ADDR, FactoryIO::NO_MODBUS_ADDR, FactoryIO::NO_MODBUS_ADDR, FactoryIO::NO_MODBUS_ADDR);
 
@@ -552,39 +478,31 @@ namespace _1FactoryIOLibTest_module {
 			Assert::ExpectException<std::runtime_error, std::function<void(void)>>([&]() {
 				remover.getDetectedBases();
 				}, L"getDetectedBases did not rase a exception when no valid modbus addr is provided.");
-
-			mb.modbus_close();
 		}
 	};
 
 	TEST_CLASS(Convayor) {
 		TEST_METHOD(digital) {
-			modbus mb = modbus("127.0.0.1", 502);
-			mb.modbus_set_slave_id(1);
-			if (!mb.modbus_connect()) {
-				Assert::Fail(L"Couldn't connect to FactoryIO");
-			}
+			FactoryIO::ModbusProvider_t mb("127.0.0.1", 502, 1);
 
 			bool readValue = 0;
 
 			FactoryIO::Convayor_t convayor(mb, 6, 7, 8, 4, FactoryIO::ConvayorMode_t::DIGITAL, 0);
 			convayor.move(true);
-			mb.modbus_read_coils(6, 1, &readValue);
+			mb.getModbus().modbus_read_coils(6, 1, &readValue);
 			Assert::IsTrue(readValue, L"convayor didn't start moving.");
 
 			convayor.move(false);
-			mb.modbus_read_coils(6, 1, &readValue);
+			mb.getModbus().modbus_read_coils(6, 1, &readValue);
 			Assert::IsFalse(readValue, L"convayor didn't stop moving.");
 
 			convayor.move(true);
-			mb.modbus_read_coils(6, 1, &readValue);
+			mb.getModbus().modbus_read_coils(6, 1, &readValue);
 			Assert::IsTrue(readValue, L"convayor didn't start moving.");
 
 			convayor.stop();
-			mb.modbus_read_coils(6, 1, &readValue);
+			mb.getModbus().modbus_read_coils(6, 1, &readValue);
 			Assert::IsFalse(readValue, L"convayor didn't stop moving.");
-
-			mb.modbus_close();
 		}
 
 		TEST_METHOD(digitalPlusMinus) {
@@ -593,35 +511,29 @@ namespace _1FactoryIOLibTest_module {
 			constexpr FactoryIO::modbusAddr_t digitalMinusAddr = 8;
 			constexpr FactoryIO::modbusAddr_t analogAddr = 4;
 
-			modbus mb = modbus("127.0.0.1", 502);
-			mb.modbus_set_slave_id(1);
-			if (!mb.modbus_connect()) {
-				Assert::Fail(L"Couldn't connect to FactoryIO");
-			}
+			FactoryIO::ModbusProvider_t mb("127.0.0.1", 502, 1);
 
 			bool readValue = 0;
 
 			FactoryIO::Convayor_t convayor(mb, digitalAddr, digitalPlusAddr, digitalMinusAddr, analogAddr, FactoryIO::ConvayorMode_t::DIGITAL_PLUS_MINUS, 0);
 
 			convayor.moveDirection(false);
-			mb.modbus_read_coils(digitalPlusAddr, 1, &readValue);
+			mb.getModbus().modbus_read_coils(digitalPlusAddr, 1, &readValue);
 			Assert::IsTrue(readValue, L"convayor didn't move forward");
-			mb.modbus_read_coils(digitalMinusAddr, 1, &readValue);
+			mb.getModbus().modbus_read_coils(digitalMinusAddr, 1, &readValue);
 			Assert::IsFalse(readValue, L"convayor minus shouldn't turn on");
 
 			convayor.moveDirection(true);
-			mb.modbus_read_coils(digitalPlusAddr, 1, &readValue);
+			mb.getModbus().modbus_read_coils(digitalPlusAddr, 1, &readValue);
 			Assert::IsFalse(readValue, L"convayor plus shouldn't turn on");
-			mb.modbus_read_coils(digitalMinusAddr, 1, &readValue);
+			mb.getModbus().modbus_read_coils(digitalMinusAddr, 1, &readValue);
 			Assert::IsTrue(readValue, L"convayor didn't move forward");
 
 			convayor.stop();
-			mb.modbus_read_coils(digitalPlusAddr, 1, &readValue);
+			mb.getModbus().modbus_read_coils(digitalPlusAddr, 1, &readValue);
 			Assert::IsFalse(readValue, L"convayor didn't stop");
-			mb.modbus_read_coils(digitalMinusAddr, 1, &readValue);
+			mb.getModbus().modbus_read_coils(digitalMinusAddr, 1, &readValue);
 			Assert::IsFalse(readValue, L"convayor didn't stop");
-
-			mb.modbus_close();
 		}
 
 		TEST_METHOD(analog) {
@@ -631,11 +543,7 @@ namespace _1FactoryIOLibTest_module {
 			constexpr FactoryIO::modbusAddr_t analogAddr = 4;
 			constexpr uint16_t scaleFactor = 100;
 
-			modbus mb = modbus("127.0.0.1", 502);
-			mb.modbus_set_slave_id(1);
-			if (!mb.modbus_connect()) {
-				Assert::Fail(L"Couldn't connect to FactoryIO");
-			}
+			FactoryIO::ModbusProvider_t mb("127.0.0.1", 502, 1);
 
 			uint16_t readValue = 0;
 
@@ -643,23 +551,21 @@ namespace _1FactoryIOLibTest_module {
 
 			for (float testValue = -1; testValue < 1; testValue = testValue + 0.1f) {
 				convayor.moveAtSpeed(testValue);
-				mb.modbus_read_holding_registers(analogAddr, 1, &readValue);
+				mb.getModbus().modbus_read_holding_registers(analogAddr, 1, &readValue);
 				Assert::AreEqual(static_cast<uint16_t>(FactoryIO::map(testValue, -1.0f, 1.0f, -10.0f, 10.0f) * scaleFactor), readValue, L"should speed is not equal to is speed");
 			}
 
 			convayor.stop();
-			mb.modbus_read_holding_registers(analogAddr, 1, &readValue);
+			mb.getModbus().modbus_read_holding_registers(analogAddr, 1, &readValue);
 			Assert::AreEqual((uint16_t)0, readValue, L"convayorbelt didn't stop");
 
 			convayor.move(true);
-			mb.modbus_read_holding_registers(analogAddr, 1, &readValue);
+			mb.getModbus().modbus_read_holding_registers(analogAddr, 1, &readValue);
 			Assert::AreEqual((uint16_t)1000, readValue, L"convayorbelt didn't start");
 
 			convayor.move(false);
-			mb.modbus_read_holding_registers(analogAddr, 1, &readValue);
+			mb.getModbus().modbus_read_holding_registers(analogAddr, 1, &readValue);
 			Assert::AreEqual((uint16_t)0, readValue, L"convayorbelt didn't stop");
-
-			mb.modbus_close();
 		}
 
 		TEST_METHOD(exceptions) {
@@ -668,11 +574,7 @@ namespace _1FactoryIOLibTest_module {
 			constexpr FactoryIO::modbusAddr_t digitalMinusAddr = 8;
 			constexpr FactoryIO::modbusAddr_t analogAddr = 4;
 
-			modbus mb = modbus("127.0.0.1", 502);
-			mb.modbus_set_slave_id(1);
-			if (!mb.modbus_connect()) {
-				Assert::Fail(L"Couldn't connect to FactoryIO");
-			}
+			FactoryIO::ModbusProvider_t mb("127.0.0.1", 502, 1);
 
 			Assert::ExpectException<std::runtime_error, std::function<void(void)>>([&]() {
 				FactoryIO::Convayor_t convayor(mb, FactoryIO::NO_MODBUS_ADDR, FactoryIO::NO_MODBUS_ADDR, FactoryIO::NO_MODBUS_ADDR, FactoryIO::NO_MODBUS_ADDR, FactoryIO::ConvayorMode_t::DIGITAL, 0);
@@ -720,11 +622,8 @@ namespace _1FactoryIOLibTest_module {
 			constexpr FactoryIO::modbusAddr_t signalBAddr = 1;
 			constexpr uint16_t scaleFactor = 100;
 
-			modbus mb = modbus("127.0.0.1", 502);
-			mb.modbus_set_slave_id(1);
-			if (!mb.modbus_connect()) {
-				Assert::Fail(L"Couldn't connect to FactoryIO");
-			}
+			FactoryIO::ModbusProvider_t mb("127.0.0.1", 502, 1);
+
 			FactoryIO::Convayor_t convayor(mb, FactoryIO::NO_MODBUS_ADDR, FactoryIO::NO_MODBUS_ADDR, FactoryIO::NO_MODBUS_ADDR, analogAddr, FactoryIO::ConvayorMode_t::ANALOG, scaleFactor);
 			FactoryIO::encoder_t encoder(mb, signalAAddr, signalBAddr);
 
@@ -737,7 +636,6 @@ namespace _1FactoryIOLibTest_module {
 			Assert::IsTrue(encoder.isPositionValid(), L"encoder lost position");
 			Assert::IsTrue(0 < encoder.getRotationCounter(), L"convayor didn't move forward");
 			
-			mb.modbus_close();
 		}
 
 		TEST_METHOD(reverse) {
@@ -746,11 +644,8 @@ namespace _1FactoryIOLibTest_module {
 			constexpr FactoryIO::modbusAddr_t signalBAddr = 1;
 			constexpr uint16_t scaleFactor = 100;
 
-			modbus mb = modbus("127.0.0.1", 502);
-			mb.modbus_set_slave_id(1);
-			if (!mb.modbus_connect()) {
-				Assert::Fail(L"Couldn't connect to FactoryIO");
-			}
+			FactoryIO::ModbusProvider_t mb("127.0.0.1", 502, 1);
+
 			FactoryIO::Convayor_t convayor(mb, FactoryIO::NO_MODBUS_ADDR, FactoryIO::NO_MODBUS_ADDR, FactoryIO::NO_MODBUS_ADDR, analogAddr, FactoryIO::ConvayorMode_t::ANALOG, scaleFactor);
 			FactoryIO::encoder_t encoder(mb, signalAAddr, signalBAddr);
 
@@ -763,18 +658,13 @@ namespace _1FactoryIOLibTest_module {
 			Assert::IsTrue(encoder.isPositionValid(), L"encoder lost position");
 			Assert::IsTrue(0 > encoder.getRotationCounter(), L"convayor didn't move backward");
 
-			mb.modbus_close();
 		}
 
 		TEST_METHOD(excetions) {
 			constexpr FactoryIO::modbusAddr_t signalAAddr = 0;
 			constexpr FactoryIO::modbusAddr_t signalBAddr = 1;
 
-			modbus mb = modbus("127.0.0.1", 502);
-			mb.modbus_set_slave_id(1);
-			if (!mb.modbus_connect()) {
-				Assert::Fail(L"Couldn't connect to FactoryIO");
-			}
+			FactoryIO::ModbusProvider_t mb("127.0.0.1", 502, 1);
 
 			Assert::ExpectException<std::runtime_error, std::function<void(void)>>(
 				[&](void) -> void {
@@ -787,7 +677,6 @@ namespace _1FactoryIOLibTest_module {
 				}, L"no excetion when no modbusAdress is provided in signalA"
 			);
 
-			mb.modbus_close();
 		}
 
 		TEST_METHOD(highspeed) {
@@ -796,11 +685,8 @@ namespace _1FactoryIOLibTest_module {
 			constexpr FactoryIO::modbusAddr_t signalBAddr = 1;
 			constexpr uint16_t scaleFactor = 100;
 
-			modbus mb = modbus("127.0.0.1", 502);
-			mb.modbus_set_slave_id(1);
-			if (!mb.modbus_connect()) {
-				Assert::Fail(L"Couldn't connect to FactoryIO");
-			}
+			FactoryIO::ModbusProvider_t mb("127.0.0.1", 502, 1);
+
 			FactoryIO::Convayor_t convayor(mb, FactoryIO::NO_MODBUS_ADDR, FactoryIO::NO_MODBUS_ADDR, FactoryIO::NO_MODBUS_ADDR, analogAddr, FactoryIO::ConvayorMode_t::ANALOG, scaleFactor);
 			FactoryIO::encoder_t encoder(mb, signalAAddr, signalBAddr, false);
 
@@ -816,7 +702,6 @@ namespace _1FactoryIOLibTest_module {
 			Assert::IsTrue(encoder.isPositionValid(), L"encoder lost position");
 			Assert::IsTrue(0 < encoder.getRotationCounter(), L"convayor didn't move forward");
 
-			mb.modbus_close();
 		}
 	};
 
@@ -824,36 +709,25 @@ namespace _1FactoryIOLibTest_module {
 		TEST_METHOD(setRollerStop) {
 			constexpr FactoryIO::modbusAddr_t rollerStopAddr = 9;
 
-			modbus mb = modbus("127.0.0.1", 502);
-			mb.modbus_set_slave_id(1);
-			if (!mb.modbus_connect()) {
-				Assert::Fail(L"Couldn't connect to FactoryIO");
-			}
+			FactoryIO::ModbusProvider_t mb("127.0.0.1", 502, 1);
 
 			bool modbusReadValue = false;
-
 
 			FactoryIO::rollerStop_t rollerStop(mb, rollerStopAddr);
 
 			rollerStop.setRollerState(true);
-			mb.modbus_read_coils(rollerStopAddr, 1, &modbusReadValue);
+			mb.getModbus().modbus_read_coils(rollerStopAddr, 1, &modbusReadValue);
 			Assert::IsTrue(modbusReadValue, L"roller isn't active");
 
 			rollerStop.setRollerState(false);
-			mb.modbus_read_coils(rollerStopAddr, 1, &modbusReadValue);
+			mb.getModbus().modbus_read_coils(rollerStopAddr, 1, &modbusReadValue);
 			Assert::IsFalse(modbusReadValue, L"roller isn't deactivated");
-
-			mb.modbus_close();
 		}
 
 		TEST_METHOD(exceptions) {
 			constexpr FactoryIO::modbusAddr_t rollerStopAddr = 9;
 
-			modbus mb = modbus("127.0.0.1", 502);
-			mb.modbus_set_slave_id(1);
-			if (!mb.modbus_connect()) {
-				Assert::Fail(L"Couldn't connect to FactoryIO");
-			}
+			FactoryIO::ModbusProvider_t mb("127.0.0.1", 502, 1);
 
 			FactoryIO::rollerStop_t rollerStop(mb, FactoryIO::NO_MODBUS_ADDR);
 
@@ -862,8 +736,6 @@ namespace _1FactoryIOLibTest_module {
 					rollerStop.setRollerState(true);
 				}, L"no excetion when no modbusAdress is provided"
 			);
-
-			mb.modbus_close();
 		}
 	};
 
@@ -874,43 +746,37 @@ namespace _1FactoryIOLibTest_module {
 			constexpr FactoryIO::modbusAddr_t ChainTransferLeft = 12;
 			constexpr FactoryIO::modbusAddr_t ChainTransferRight = 13;
 
-			modbus mb = modbus("127.0.0.1", 502);
-			mb.modbus_set_slave_id(1);
-			if (!mb.modbus_connect()) {
-				Assert::Fail(L"Couldn't connect to FactoryIO");
-			}
+			FactoryIO::ModbusProvider_t mb("127.0.0.1", 502, 1);
 
 			bool modbusReadValue = false;
 
 			FactoryIO::chainTransfer_t chainTransfer(mb, ChainTransferPlus, ChainTransferMinus, ChainTransferLeft, ChainTransferRight);
 
 			chainTransfer.moveForward();
-			mb.modbus_read_coils(ChainTransferPlus, 1, &modbusReadValue);
+			mb.getModbus().modbus_read_coils(ChainTransferPlus, 1, &modbusReadValue);
 			Assert::IsTrue(modbusReadValue, L"not moving forward");
 
 			chainTransfer.moveBackward();
-			mb.modbus_read_coils(ChainTransferMinus, 1, &modbusReadValue);
+			mb.getModbus().modbus_read_coils(ChainTransferMinus, 1, &modbusReadValue);
 			Assert::IsTrue(modbusReadValue, L"not moving backward");
 
 			chainTransfer.moveLeft();
-			mb.modbus_read_coils(ChainTransferLeft, 1, &modbusReadValue);
+			mb.getModbus().modbus_read_coils(ChainTransferLeft, 1, &modbusReadValue);
 			Assert::IsTrue(modbusReadValue, L"not moving left");
 
 			chainTransfer.moveRight();
-			mb.modbus_read_coils(ChainTransferRight, 1, &modbusReadValue);
+			mb.getModbus().modbus_read_coils(ChainTransferRight, 1, &modbusReadValue);
 			Assert::IsTrue(modbusReadValue, L"not moving right");
 
 			chainTransfer.stop();
-			mb.modbus_read_coils(ChainTransferPlus, 1, &modbusReadValue);
+			mb.getModbus().modbus_read_coils(ChainTransferPlus, 1, &modbusReadValue);
 			Assert::IsFalse(modbusReadValue, L"not stopped");
-			mb.modbus_read_coils(ChainTransferMinus, 1, &modbusReadValue);
+			mb.getModbus().modbus_read_coils(ChainTransferMinus, 1, &modbusReadValue);
 			Assert::IsFalse(modbusReadValue, L"not stopped");
-			mb.modbus_read_coils(ChainTransferLeft, 1, &modbusReadValue);
+			mb.getModbus().modbus_read_coils(ChainTransferLeft, 1, &modbusReadValue);
 			Assert::IsFalse(modbusReadValue, L"not stopped");
-			mb.modbus_read_coils(ChainTransferRight, 1, &modbusReadValue);
+			mb.getModbus().modbus_read_coils(ChainTransferRight, 1, &modbusReadValue);
 			Assert::IsFalse(modbusReadValue, L"not stopped");
-
-			mb.modbus_close();
 		}
 
 		TEST_METHOD(exceptions) {
@@ -919,14 +785,9 @@ namespace _1FactoryIOLibTest_module {
 			constexpr FactoryIO::modbusAddr_t ChainTransferLeft = 12;
 			constexpr FactoryIO::modbusAddr_t ChainTransferRight = 13;
 
-			modbus mb = modbus("127.0.0.1", 502);
-			mb.modbus_set_slave_id(1);
-			if (!mb.modbus_connect()) {
-				Assert::Fail(L"Couldn't connect to FactoryIO");
-			}
+			FactoryIO::ModbusProvider_t mb("127.0.0.1", 502, 1);
 
-
-			FactoryIO::chainTransfer_t chainTransfer(mb, FactoryIO::NO_MODBUS_ADDR , FactoryIO::NO_MODBUS_ADDR, FactoryIO::NO_MODBUS_ADDR, FactoryIO::NO_MODBUS_ADDR);
+			FactoryIO::chainTransfer_t chainTransfer(mb, FactoryIO::NO_MODBUS_ADDR, FactoryIO::NO_MODBUS_ADDR, FactoryIO::NO_MODBUS_ADDR, FactoryIO::NO_MODBUS_ADDR);
 
 			Assert::ExpectException<std::runtime_error, std::function<void(void)>>(
 				[&](void) -> void {
@@ -950,7 +811,6 @@ namespace _1FactoryIOLibTest_module {
 			);
 
 			chainTransfer.stop();
-			mb.modbus_close();
 		}
 	};
 }
@@ -959,11 +819,7 @@ namespace _1FactoryIOLibTest_module {
 namespace _2FactoryIOLibTest_integration {
 	TEST_CLASS(emmiterRemover) {
 		TEST_METHOD(spawningDeleting) {
-			modbus mb = modbus("127.0.0.1", 502);
-			mb.modbus_set_slave_id(1);
-			if (!mb.modbus_connect()) {
-				Assert::Fail(L"Couldn't connect to FactoryIO");
-			}
+			FactoryIO::ModbusProvider_t mb("127.0.0.1", 502, 1);
 
 			FactoryIO::remover_t remover(mb, 3, 2, 1, 0);
 			FactoryIO::emmiter_t emmiter(mb, 5, 1, 0);

@@ -1,7 +1,7 @@
 #include "convayorGate.h"
 
 FactoryIO::convayorGate_t::convayorGate_t(
-	modbus& mb, 
+	ModbusProvider_t& mb, 
 	modbusAddr_t digital, 
 	modbusAddr_t digitalPlus, 
 	modbusAddr_t digitalMinus, 
@@ -14,7 +14,5 @@ FactoryIO::convayorGate_t::convayorGate_t(
 
 bool FactoryIO::convayorGate_t::isGateOpend() {
 	FactoryIO::internal::checkModbusAddr(_opendIndex);
-	bool isConvayorOpen = false;
-	mb.modbus_read_input_bits(_opendIndex, 1, &isConvayorOpen);
-	return isConvayorOpen;
+	return mb.readInputBit(_opendIndex);
 }

@@ -2,7 +2,7 @@
 #include <stdexcept>
 
 FactoryIO::lightArray_t::lightArray_t(
-	modbus& mb,
+	ModbusProvider_t& mb,
 	lightArrayMode_t mode,
 	modbusAddr_t valueAddr,
 	modbusAddr_t beam1Addr,
@@ -31,7 +31,7 @@ FactoryIO::lightArray_t::lightArray_t(
 	_analogInput(analogInput), 
 	_scaleFactor(scaleFactor) { }
 
-FactoryIO::lightArray_t FactoryIO::lightArray_t::constructNumerical(modbus& mb, modbusAddr_t valueAddr) {
+FactoryIO::lightArray_t FactoryIO::lightArray_t::constructNumerical(ModbusProvider_t& mb, modbusAddr_t valueAddr) {
 	return lightArray_t(
 		mb,
 		lightArrayMode_t::NUMERICAL, 
@@ -51,7 +51,7 @@ FactoryIO::lightArray_t FactoryIO::lightArray_t::constructNumerical(modbus& mb, 
 }
 
 FactoryIO::lightArray_t FactoryIO::lightArray_t::constructDigital(
-	modbus& mb, 
+	ModbusProvider_t& mb, 
 	modbusAddr_t beam1Addr, 
 	modbusAddr_t beam2Addr, 
 	modbusAddr_t beam3Addr, 
@@ -79,7 +79,7 @@ FactoryIO::lightArray_t FactoryIO::lightArray_t::constructDigital(
 	);
 }
 
-FactoryIO::lightArray_t FactoryIO::lightArray_t::constructAnalog(modbus& mb, modbusAddr_t analogInput, uint16_t scaleFactor) {
+FactoryIO::lightArray_t FactoryIO::lightArray_t::constructAnalog(ModbusProvider_t& mb, modbusAddr_t analogInput, uint16_t scaleFactor) {
 	return lightArray_t(
 		mb,
 		lightArrayMode_t::ANALOG,
@@ -105,8 +105,8 @@ uint16_t FactoryIO::lightArray_t::getBitfieled() {
 	switch (_mode) {
 	case FactoryIO::lightArrayMode_t::NUMERICAL:
 		internal::checkModbusAddr(_valueAddr);
-		_mb.modbus_read_input_registers(_valueAddr, 1, &bitfield);
-		return bitfield;
+		return _mb.readInputRegister(_valueAddr);
+
 	case FactoryIO::lightArrayMode_t::DIGITAL:
 		internal::checkModbusAddr(_beam1Addr);
 		internal::checkModbusAddr(_beam2Addr);
@@ -117,24 +117,15 @@ uint16_t FactoryIO::lightArray_t::getBitfieled() {
 		internal::checkModbusAddr(_beam7Addr);
 		internal::checkModbusAddr(_beam8Addr);
 		internal::checkModbusAddr(_beam9Addr);
-		_mb.modbus_read_input_bits(_beam1Addr, 1, &beamState);
-		bitfieldArray.push_back(beamState);
-		_mb.modbus_read_input_bits(_beam2Addr, 1, &beamState);
-		bitfieldArray.push_back(beamState);
-		_mb.modbus_read_input_bits(_beam3Addr, 1, &beamState);
-		bitfieldArray.push_back(beamState);
-		_mb.modbus_read_input_bits(_beam4Addr, 1, &beamState);
-		bitfieldArray.push_back(beamState);
-		_mb.modbus_read_input_bits(_beam5Addr, 1, &beamState);
-		bitfieldArray.push_back(beamState);
-		_mb.modbus_read_input_bits(_beam6Addr, 1, &beamState);
-		bitfieldArray.push_back(beamState);
-		_mb.modbus_read_input_bits(_beam7Addr, 1, &beamState);
-		bitfieldArray.push_back(beamState);
-		_mb.modbus_read_input_bits(_beam8Addr, 1, &beamState);
-		bitfieldArray.push_back(beamState);
-		_mb.modbus_read_input_bits(_beam9Addr, 1, &beamState);
-		bitfieldArray.push_back(beamState);
+		bitfieldArray.push_back(_mb.readInputBit(_beam1Addr));
+		bitfieldArray.push_back(_mb.readInputBit(_beam2Addr));
+		bitfieldArray.push_back(_mb.readInputBit(_beam3Addr));
+		bitfieldArray.push_back(_mb.readInputBit(_beam4Addr));
+		bitfieldArray.push_back(_mb.readInputBit(_beam5Addr));
+		bitfieldArray.push_back(_mb.readInputBit(_beam6Addr));
+		bitfieldArray.push_back(_mb.readInputBit(_beam7Addr));
+		bitfieldArray.push_back(_mb.readInputBit(_beam8Addr));
+		bitfieldArray.push_back(_mb.readInputBit(_beam9Addr));
 		return internal::BitfieldEnumMapper_t::toBitfield(bitfieldArray);
 	case FactoryIO::lightArrayMode_t::ANALOG:
 		throw std::domain_error("unable to get bitfield with ananlog value");
@@ -149,9 +140,7 @@ bool FactoryIO::lightArray_t::isBeamInterupted() {
 
 
 	internal::checkModbusAddr(_analogInput);
-	uint16_t analogValue = 0;
-	_mb.modbus_read_input_registers(_analogInput, 1, &analogValue);
-	return analogValue != 0;
+	return _mb.readInputRegister(_analogInput) != 0;
 }
 
 bool FactoryIO::lightArray_t::isBeamInterupted(uint16_t beamIndex) {
@@ -164,8 +153,8 @@ uint16_t FactoryIO::lightArray_t::getNumberOfBeamsInterupted() {
 
 	if (_mode == lightArrayMode_t::ANALOG) {
 		internal::checkModbusAddr(_analogInput);
-		uint16_t analogValue = 0;
-		_mb.modbus_read_input_registers(_analogInput, 1, &analogValue);
+		uint16_t analogValue = _mb.readInputRegister(_analogInput);
+		
 		if (analogValue == 0)
 			return 0;
 		return static_cast<uint16_t>(10 * (static_cast<float>(analogValue) / static_cast<float>(_scaleFactor)) / 8);

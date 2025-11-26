@@ -2,7 +2,7 @@
 #include <stdexcept>
 #include "chainTransfer.h"
 
-FactoryIO::Convayor_t::Convayor_t(modbus& mb, modbusAddr_t digital, modbusAddr_t digitalPlus, modbusAddr_t digitalMinus, modbusAddr_t analog, ConvayorMode_t mode, uint16_t scaleFactor) :
+FactoryIO::Convayor_t::Convayor_t(ModbusProvider_t& mb, modbusAddr_t digital, modbusAddr_t digitalPlus, modbusAddr_t digitalMinus, modbusAddr_t analog, ConvayorMode_t mode, uint16_t scaleFactor) :
 	mb(mb),
 	_digitalAddr(digital), 
 	_digitalPlusAddr(digitalPlus), 
@@ -22,14 +22,14 @@ void FactoryIO::Convayor_t::move(bool move) {
 	switch (_mode) {
 	case FactoryIO::ConvayorMode_t::DIGITAL:
 		FactoryIO::internal::checkModbusAddr(_digitalAddr);
-		mb.modbus_write_coil(_digitalAddr, move);
+		mb.writeCoil(_digitalAddr, move);
 		break;
 	case FactoryIO::ConvayorMode_t::DIGITAL_PLUS_MINUS:
 		FactoryIO::internal::checkModbusAddr(_digitalPlusAddr);
 		FactoryIO::internal::checkModbusAddr(_digitalMinusAddr);
 
-		mb.modbus_write_coil(_digitalMinusAddr, false);
-		mb.modbus_write_coil(_digitalPlusAddr, move);
+		mb.writeCoil(_digitalMinusAddr, false);
+		mb.writeCoil(_digitalPlusAddr, move);
 		break;
 	case FactoryIO::ConvayorMode_t::ANALOG:
 		if (move)
@@ -49,8 +49,8 @@ void FactoryIO::Convayor_t::moveDirection(bool reverse) {
 	FactoryIO::internal::checkModbusAddr(_digitalPlusAddr);
 	FactoryIO::internal::checkModbusAddr(_digitalMinusAddr);
 
-	mb.modbus_write_coil(_digitalPlusAddr, !reverse);
-	mb.modbus_write_coil(_digitalMinusAddr, reverse);
+	mb.writeCoil(_digitalPlusAddr, !reverse);
+	mb.writeCoil(_digitalMinusAddr, reverse);
 }
 
 void FactoryIO::Convayor_t::moveAtSpeed(float speed) {
@@ -60,21 +60,21 @@ void FactoryIO::Convayor_t::moveAtSpeed(float speed) {
 	if (speed < -1 || speed > 1)
 		throw std::out_of_range("speed must be in range 1, -1 (range out of bounds)");
 	
-	mb.modbus_write_register(_analogAddr, static_cast<int16_t>(FactoryIO::map(speed, -1.0f, 1.0f, -10.0f, 10.0f) * _scaleFactor));
+	mb.writeHoldingRegister(_analogAddr, static_cast<int16_t>(FactoryIO::map(speed, -1.0f, 1.0f, -10.0f, 10.0f) * _scaleFactor));
 }
 
 void FactoryIO::Convayor_t::stop() {
 	switch (_mode) {
 	case FactoryIO::ConvayorMode_t::DIGITAL:
 		FactoryIO::internal::checkModbusAddr(_digitalAddr);
-		mb.modbus_write_coil(_digitalAddr, false);
+		mb.writeCoil(_digitalAddr, false);
 		break;
 	case FactoryIO::ConvayorMode_t::DIGITAL_PLUS_MINUS:
 		FactoryIO::internal::checkModbusAddr(_digitalPlusAddr);
 		FactoryIO::internal::checkModbusAddr(_digitalMinusAddr);
 
-		mb.modbus_write_coil(_digitalMinusAddr, false);
-		mb.modbus_write_coil(_digitalPlusAddr, false);
+		mb.writeCoil(_digitalMinusAddr, false);
+		mb.writeCoil(_digitalPlusAddr, false);
 		break;
 	case FactoryIO::ConvayorMode_t::ANALOG:
 		moveAtSpeed(0);

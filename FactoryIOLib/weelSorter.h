@@ -1,10 +1,11 @@
 #pragma once
 #include "FactoryIOGeneral.h"
+#include "modbusProvider.h"
 
 namespace FactoryIO {
 	class weelSorter_t {
 	public:
-		weelSorter_t(modbus& mb, modbusAddr_t plusAddr, modbusAddr_t minusAddr, modbusAddr_t leftAddr, modbusAddr_t rightAddr);
+		weelSorter_t(ModbusProvider_t& mb, modbusAddr_t plusAddr, modbusAddr_t minusAddr, modbusAddr_t leftAddr, modbusAddr_t rightAddr);
 		void moveForward();
 		void moveBackward();
 		void moveLeft();
@@ -16,6 +17,6 @@ namespace FactoryIO {
 		modbusAddr_t _minusAddr;
 		modbusAddr_t _leftAddr;
 		modbusAddr_t _rightAddr;
-		modbus& _mb;
+		ModbusProvider_t& _mb;
 	};
 }
