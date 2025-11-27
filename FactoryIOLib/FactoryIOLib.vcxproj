@@ -147,6 +147,7 @@
     <ClCompile Include="positioningBar.cpp" />
     <ClCompile Include="pusher.cpp" />
     <ClCompile Include="remover.cpp" />
+    <ClCompile Include="RFIDSensor.cpp" />
     <ClCompile Include="rollerStop.cpp" />
     <ClCompile Include="StackLight.cpp" />
     <ClCompile Include="stopBlade.cpp" />
@@ -173,6 +174,7 @@
     <ClInclude Include="positioningBar.h" />
     <ClInclude Include="pusher.h" />
     <ClInclude Include="remover.h" />
+    <ClInclude Include="RFIDSensor.h" />
     <ClInclude Include="rollerStop.h" />
     <ClInclude Include="StackLight.h" />
     <ClInclude Include="stopBlade.h" />
