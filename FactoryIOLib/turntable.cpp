@@ -108,8 +108,8 @@ bool FactoryIO::turntable_t::turnTurntable(bool turn) {
 
 	if (limitSwitch) {
 		_turning = false;
-		if (_mode == turntableMode_t::MONOSTABLE)
-			_mb.writeCoil(_turnIndex, false);
+		//if (_mode == turntableMode_t::MONOSTABLE)
+			//_mb.writeCoil(_turnIndex, false);
 		if (_mode == turntableMode_t::BISTABLE) {
 			_mb.writeCoil(_turnPlusIndex, false);
 			_mb.writeCoil(_turnMinusIndex, false);
