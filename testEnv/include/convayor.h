@@ -1,0 +1,35 @@
+#pragma once
+#include "FactoryIOGeneral.h"
+#include "modbusProvider.h"
+
+namespace FactoryIO {
+
+	enum class ConvayorMode_t {
+		DIGITAL = 0, 
+		DIGITAL_PLUS_MINUS, 
+		ANALOG
+	};
+
+	class Convayor_t {
+	public:
+		Convayor_t(ModbusProvider_t& mb, modbusAddr_t digital, modbusAddr_t digitalPlus, modbusAddr_t digitalMinus, modbusAddr_t analog, ConvayorMode_t mode, uint16_t scaleFactor);
+
+		void move(bool move);
+		void moveDirection(bool reverse);
+		void moveAtSpeed(float speed);
+		void stop();
+
+	protected:
+		ModbusProvider_t& mb;
+	private:
+		modbusAddr_t _digitalAddr;
+		modbusAddr_t _digitalPlusAddr;
+		modbusAddr_t _digitalMinusAddr;
+		modbusAddr_t _analogAddr;
+
+		uint16_t _scaleFactor = 0;
+		bool _reverse = false;
+
+		ConvayorMode_t _mode;
+	};
+}

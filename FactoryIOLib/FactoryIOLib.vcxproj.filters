@@ -124,7 +124,7 @@
       <Filter>Quelldateien</Filter>
     </ClCompile>
     <ClCompile Include="RFIDSensor.cpp">
-      <Filter>Quelldateien</Filter>
+      <Filter>Quelldateien\Parts\Sensors</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

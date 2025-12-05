@@ -8,7 +8,14 @@ int main() {
 	constexpr uint16_t scaleFactor = 100;
 
 	FactoryIO::ModbusProvider_t mb("127.0.0.1", 502, 1);
+	bool isConnected = mb.getModbus().is_connected();
+	FactoryIO::digitalSensor_t sens(mb, 0);
+	bool state = sens.getState();
 
+	while (true) {
+		std::cout << sens.getState() << "\n";
+	}
+	/*
 	FactoryIO::Convayor_t convayor(mb, FactoryIO::NO_MODBUS_ADDR, FactoryIO::NO_MODBUS_ADDR, FactoryIO::NO_MODBUS_ADDR, analogAddr, FactoryIO::ConvayorMode_t::ANALOG, scaleFactor);
 	FactoryIO::encoder_t encoder(mb, signalAAddr, signalBAddr);
 
@@ -18,5 +25,5 @@ int main() {
 	convayor.moveAtSpeed(1.0f);
 	std::this_thread::sleep_for(std::chrono::seconds(10));
 	convayor.moveAtSpeed(0.0f);
-
+	*/
 }

@@ -7,7 +7,9 @@ bool FactoryIO::RFIDSensor_t::read(void* data, size_t size, byte offset) {
 	if (_state != state_t::IDLE && _state != state_t::READ_REQUEST && _state != state_t::READ_WAIT_RESPONSE && _state != state_t::READ_END)
 		throw std::runtime_error("unable to read, state is not valid");
 	if (_state == state_t::IDLE) {
-		// start read
+		_currentMemoryAddress = offset;
+		_memorySize = size;
+		_state = state_t::READ_START;
 	}
 
 	stateMachine();
@@ -39,6 +41,8 @@ bool FactoryIO::RFIDSensor_t::write(void* data, size_t size, byte offset) {
 			_writeBuffer.at((i / 2) + offset) = singleValue;
 			i = i + 2;
 		}
+		_memorySize = size;
+		_currentMemoryAddress = offset;
 		_state = state_t::WRITE_START;
 	}
 
@@ -80,4 +84,5 @@ bool FactoryIO::RFIDSensor_t::stateMachine() {
 	default:
 		break;
 	}
+	return false;
 }

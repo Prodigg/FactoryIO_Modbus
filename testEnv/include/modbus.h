@@ -485,13 +485,13 @@ inline int modbus::modbus_read_input_bits(uint16_t address, uint16_t amount, boo
             set_bad_con();
             return BAD_CON;
         }
-        modbuserror_handle(to_rec, READ_INPUT_BITS);
         if (err)
             return err_no;
         for (auto i = 0; i < amount; i++)
         {
             buffer[i] = (bool)((to_rec[9u + i / 8u] >> (i % 8u)) & 1u);
         }
+        modbuserror_handle(to_rec, READ_INPUT_BITS);
         return 0;
     }
     else

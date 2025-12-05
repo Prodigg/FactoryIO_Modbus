@@ -8,7 +8,7 @@ namespace FactoryIO {
 		digitalSensor_t(ModbusProvider_t& mb, modbusAddr_t sensorInputAddr) : _mb(mb), _sensorInputAddr(sensorInputAddr) { };
 		bool getState() {
 			internal::checkModbusAddr(_sensorInputAddr);
-			return _mb.readInputBit(_sensorInputAddr);
+			return _mb.readInputRegister(_sensorInputAddr);
 		};
 	private:
 		modbusAddr_t _sensorInputAddr;
