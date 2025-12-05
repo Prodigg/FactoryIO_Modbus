@@ -31,6 +31,8 @@ namespace FactoryIO {
 		void transferFront() { _transferPos = direction_t::FRONT; };
 		void transferBack() { _transferPos = direction_t::BACK; };
 
+		bool isTurntableReadyForPickup() const { return _state == state_t::WAIT_FOR_PICKUP; }
+
 		void update();
 	private:
 		enum class direction_t {

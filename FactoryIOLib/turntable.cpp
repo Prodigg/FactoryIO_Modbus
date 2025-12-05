@@ -64,8 +64,10 @@ void FactoryIO::turntable_t::update() {
 		break;
 	case FactoryIO::turntable_t::state_t::TRANSFER:
 		setConvayingDirection(_transferPos);
-		if (transferingComplete())
+		if (transferingComplete()) {
 			_state = state_t::TURN_PICKUP;
+			_transferSensorState = false;
+		}
 		break;
 	default:
 		std::cout << "ERROR: turntable in invalid state. Reset to default." << std::endl;
@@ -85,9 +87,9 @@ bool FactoryIO::turntable_t::pickupDone() {
 bool FactoryIO::turntable_t::transferingComplete() {
 	bool sensorState = false;
 	if (_transferPos == direction_t::FRONT || _transferPos == direction_t::RIGHT)
-		sensorState = _mb.readInputBit(_frontLimitIndex);
-	if (_transferPos == direction_t::BACK || _transferPos == direction_t::LEFT)
 		sensorState = _mb.readInputBit(_backLimitIndex);
+	if (_transferPos == direction_t::BACK || _transferPos == direction_t::LEFT)
+		sensorState = _mb.readInputBit(_frontLimitIndex);
 
 	if (sensorState == false && _transferSensorState == true) {
 		_transferSensorState = sensorState;
@@ -136,9 +138,9 @@ bool FactoryIO::turntable_t::shouldRotate(direction_t direction) {
 void FactoryIO::turntable_t::setConvayingDirection(direction_t direction) {
 	if (_lastConvayingState != (direction == direction_t::FRONT || direction == direction_t::RIGHT) || !_convaying) {
 		_convaying = true;
-		_lastConvayingState = (direction == direction_t::FRONT || direction == direction_t::RIGHT);
-		_mb.writeCoil(_rollPlusIndex, (direction == direction_t::FRONT || direction == direction_t::RIGHT));
-		_mb.writeCoil(_rollMinusIndex, !(direction == direction_t::FRONT || direction == direction_t::RIGHT));
+		_lastConvayingState = !(direction == direction_t::FRONT || direction == direction_t::RIGHT);
+		_mb.writeCoil(_rollPlusIndex, !(direction == direction_t::FRONT || direction == direction_t::RIGHT));
+		_mb.writeCoil(_rollMinusIndex, (direction == direction_t::FRONT || direction == direction_t::RIGHT));
 	}
 }
 

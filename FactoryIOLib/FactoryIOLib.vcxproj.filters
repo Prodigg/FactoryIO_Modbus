@@ -126,6 +126,9 @@
     <ClCompile Include="RFIDSensor.cpp">
       <Filter>Quelldateien\Parts\Sensors</Filter>
     </ClCompile>
+    <ClCompile Include="Timers.cpp">
+      <Filter>Quelldateien</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="modbus.h">
@@ -202,6 +205,9 @@
     </ClInclude>
     <ClInclude Include="RFIDSensor.h">
       <Filter>Headerdateien\Parts\Sensors</Filter>
+    </ClInclude>
+    <ClInclude Include="Timers.h">
+      <Filter>Headerdateien</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

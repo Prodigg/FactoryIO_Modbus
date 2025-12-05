@@ -151,6 +151,7 @@
     <ClCompile Include="rollerStop.cpp" />
     <ClCompile Include="StackLight.cpp" />
     <ClCompile Include="stopBlade.cpp" />
+    <ClCompile Include="Timers.cpp" />
     <ClCompile Include="turntable.cpp" />
     <ClCompile Include="vision.cpp" />
     <ClCompile Include="WarningLight.cpp" />
@@ -178,6 +179,7 @@
     <ClInclude Include="rollerStop.h" />
     <ClInclude Include="StackLight.h" />
     <ClInclude Include="stopBlade.h" />
+    <ClInclude Include="Timers.h" />
     <ClInclude Include="turntable.h" />
     <ClInclude Include="vision.h" />
     <ClInclude Include="WarningLight.h" />
