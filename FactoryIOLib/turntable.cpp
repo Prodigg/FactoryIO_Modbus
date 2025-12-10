@@ -45,6 +45,38 @@ FactoryIO::turntable_t::turntable_t(
 	}
 }
 
+FactoryIO::turntable_t FactoryIO::turntable_t::constructMonostable(ModbusProvider_t& mb, modbusAddr_t rollPlus, modbusAddr_t rollMinus, modbusAddr_t frontLimit, modbusAddr_t backLimit, modbusAddr_t limit0, modbusAddr_t limit90, modbusAddr_t turn) {
+	return turntable_t(
+		mb, 
+		rollPlus, 
+		rollMinus, 
+		frontLimit, 
+		backLimit, 
+		limit0, 
+		limit90, 
+		FactoryIO::turntableMode_t::MONOSTABLE, 
+		turn, 
+		NO_MODBUS_ADDR,
+		NO_MODBUS_ADDR
+	);
+}
+
+FactoryIO::turntable_t FactoryIO::turntable_t::constructBistable(ModbusProvider_t& mb, modbusAddr_t rollPlus, modbusAddr_t rollMinus, modbusAddr_t frontLimit, modbusAddr_t backLimit, modbusAddr_t limit0, modbusAddr_t limit90, modbusAddr_t turnPlus, modbusAddr_t turnMinus) {
+	return turntable_t(
+		mb, 
+		rollPlus,
+		rollMinus,
+		frontLimit,
+		backLimit,
+		limit0,
+		limit90,
+		FactoryIO::turntableMode_t::BISTABLE,
+		NO_MODBUS_ADDR,
+		turnPlus,
+		turnMinus
+	);
+}
+
 void FactoryIO::turntable_t::update() {
 	switch (_state) {
 	case FactoryIO::turntable_t::state_t::TURN_PICKUP:
@@ -108,8 +140,6 @@ bool FactoryIO::turntable_t::turnTurntable(bool turn) {
 
 	if (limitSwitch) {
 		_turning = false;
-		//if (_mode == turntableMode_t::MONOSTABLE)
-			//_mb.writeCoil(_turnIndex, false);
 		if (_mode == turntableMode_t::BISTABLE) {
 			_mb.writeCoil(_turnPlusIndex, false);
 			_mb.writeCoil(_turnMinusIndex, false);

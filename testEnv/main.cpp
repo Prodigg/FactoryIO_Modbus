@@ -1,7 +1,5 @@
 #include <FactoryIO.h>
-#include <iostream>
-
-int main() {
+#include <iostreamint main() {
 	constexpr FactoryIO::modbusAddr_t turntableRollPlus = 3;
 	constexpr FactoryIO::modbusAddr_t turntableRollMinus = 4;
 	constexpr FactoryIO::modbusAddr_t turntableFrontLimit = 3;
